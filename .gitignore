@@ -1,0 +1,89 @@
+# Directories
+data/
+output/
+results/
+graphics/
+figures/
+Rplots.pdf
+
+# Data files
+*.csv
+*.tsv
+*.rda
+*.RData
+*.rdata
+*.rds
+*.Rds
+*.RDS
+*.feather
+*.parquet
+*.dta
+*.sav
+*.xlsx
+*.xls
+
+# PDFs and images
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.tif
+
+# LaTeX build files
+*.aux
+*.bbl
+*.blg
+*.cb
+*.cb2
+*.dvi
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.ps
+*.snm
+*.spl
+*.synctex.gz
+*.tcp
+*.toc
+
+# R session files
+.Rhistory
+.Rproj.user/
+.RData
+.Ruserdata
+*.Rproj
+
+# Python/cache files
+__pycache__/
+*.pyc
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local LLM/tooling files
+.aider*
+.claude/
+.codex/
+.continue/
+.cursor/
+.gemini/
+.roo/
+.windsurf/
+AGENTS.md
+CLAUDE.md
+CODEX.md
+GEMINI.md
+*PROMPT*.md
+*prompt*.md
+FINAL_*.md
+PACKAGE_*.md
+FEATURE_REQUEST*.md
+ALS_MCMC*.md
+*LLM*.md
+*llm*.md
+*agent*.md
+*AGENT*.md
