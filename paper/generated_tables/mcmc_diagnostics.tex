@@ -1,0 +1,17 @@
+\begin{table}[ht]
+\centering
+\caption{Scalar MCMC diagnostics for the three main snap-shift fits. The scan column reports total scans, burn-in, and thinning interval; retained draws are posterior draws after burn-in and thinning. Parentheses report posterior standard deviations. ESS is the minimum effective sample size across the saved scalar chains for $\pi$, $\rho_{uv}$, and $\sigma_u$. Recorded source indicates that the saved fit contains the snap-shift source hash; local match reports whether the currently mutable local \pkg{lame} branch matches that saved hash.}
+\label{tab:mcmc-diagnostics}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l l l r r r r r l l@{}}
+\toprule
+\textbf{Relation} & \textbf{Family} & \textbf{Scans/burn/thin} & \textbf{Draws} & $\bar{\pi}$ & $\rho_{uv}$ & $\sigma_u$ & \textbf{Min. ESS} & \textbf{Recorded source} & \textbf{Local match} \\
+\midrule
+UN voting & normal &  6000/ 3000/10 &  600 & 0.369 (0.007) & 0.986 (0.001) & 0.011 (0.000) & 154 & yes & no \\
+Trade & normal &  6000/ 3000/10 &  600 & 0.012 (0.004) & 0.990 (0.000) & 0.008 (0.000) & 119 & yes & no \\
+Sanctions & poisson & 30000/15000/10 & 3000 & 0.024 (0.003) & 0.000 (0.000) & 0.007 (0.000) & 32 & yes & yes \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

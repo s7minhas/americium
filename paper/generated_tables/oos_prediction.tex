@@ -1,0 +1,16 @@
+\begin{table}[!htbp]
+\centering
+\caption{Rolling one-year-ahead prediction diagnostics for the UN-voting layer. Each row fits a smooth AR(1) latent-space model through the training end year and forecasts the next observed annual network. Surprise is the per-state loss in predictive log density relative to that state's in-sample one-step forecast history, scaled by the in-sample median absolute deviation. Higher values mean worse prediction.}
+\label{tab:oos-prediction}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l r r r r r r r r r r@{}}
+\toprule
+\textbf{Train $\rightarrow$ target} & \textbf{States} & \textbf{Focal} & \textbf{All med.} & \textbf{Focal med.} & \textbf{U.S.} & \textbf{Allies} & \textbf{Rivals} & \textbf{Hedgers} & \textbf{Focal $>2$} & \textbf{Focal worse pct.} \\
+\midrule
+1989--2023 -> 2024 & 191 & 34 & -0.39 & -0.44 & 1.23 & -0.47 & -0.89 & -0.15 & 0\% & 29\% \\
+1989--2024 -> 2025 & 191 & 34 & 3.92 & 4.88 & -6.88 & 5.18 & 4.51 & 4.61 & 94\% & 100\% \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

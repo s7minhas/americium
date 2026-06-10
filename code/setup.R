@@ -21,7 +21,21 @@ repo_candidates = repo_candidates[file.exists(file.path(repo_candidates, 'code',
 if(length(repo_candidates) == 0){ stop('Could not locate americium repository root.') }
 
 path_git = add_slash(repo_candidates[1])
-path_paper = paste0(path_git, 'Paper/')
+paper_env = Sys.getenv('AMERICIUM_PAPER_DIR', unset = NA_character_)
+paper_candidates = c(
+	paper_env,
+	paste0(path_git, 'Paper/'),
+	'/mnt/d/Dropbox/tmp/americium_tmp/americium/Paper/',
+	'/mnt/c/Users/herme/OneDrive/Desktop/americium/Paper/'
+)
+paper_candidates = path.expand(paper_candidates[!is.na(paper_candidates) & nzchar(paper_candidates)])
+paper_candidates = unique(normalizePath(paper_candidates, mustWork = FALSE))
+paper_candidates = paper_candidates[dir.exists(paper_candidates)]
+path_paper = if(length(paper_candidates) > 0){
+	add_slash(paper_candidates[1])
+} else {
+	paste0(path_git, 'Paper/')
+}
 path_code = paste0(path_git, 'code/')
 path_funcs = paste0(path_code, 'funcs/')
 

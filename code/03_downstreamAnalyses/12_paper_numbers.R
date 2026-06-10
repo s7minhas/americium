@@ -817,36 +817,6 @@ leaveout_table = c(
 )
 writeLines(leaveout_table, paste0(path_generated_tables, 'leaveout_index.tex'))
 
-manifest_rows = apply(source_manifest, 1, function(row){
-	paste(
-		tex_escape(row[['layer']]),
-		tex_escape(row[['source']]),
-		tex_escape(row[['file_or_endpoint']]),
-		tex_escape(row[['retrieval_or_build']]),
-		tex_hash(row[['hash_or_identifier']]),
-		tex_escape(row[['notes']]),
-		sep = ' & '
-	)
-})
-manifest_table = c(
-	'\\begin{landscape}',
-	'\\begin{table}[p]',
-	'\\centering',
-	'\\caption{Source manifest for the current manuscript outputs. Hashes identify cached local inputs or saved package source fingerprints used by the fitted objects. The trade and sanctions rows remain current-vintage cached evidence and should be replaced by archived snapshots in a public replication package.}',
-	'\\label{tab:source-manifest}',
-	'\\scriptsize',
-	'\\begin{tabularx}{\\linewidth}{@{}l X X X X X@{}}',
-	'\\toprule',
-	'\\textbf{Layer} & \\textbf{Source} & \\textbf{File or endpoint} & \\textbf{Retrieval/build} & \\textbf{Hash or identifier} & \\textbf{Notes} \\\\',
-	'\\midrule',
-	paste0(manifest_rows, ' \\\\'),
-	'\\bottomrule',
-	'\\end{tabularx}',
-	'\\end{table}',
-	'\\end{landscape}'
-)
-writeLines(manifest_table, paste0(path_generated_tables, 'source_manifest.tex'))
-
 relation_labels = c(
 	un_voting = 'UN voting',
 	trade = 'Trade',
