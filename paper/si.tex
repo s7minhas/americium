@@ -1,28 +1,26 @@
-\documentclass[12pt,pdflatex,authoryear]{elsarticle}
+\pdfminorversion=7
+\documentclass[10pt,authoryear]{elsarticle}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% PREAMBLE %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % word count
-%TC:incbib
 
 % references
 \usepackage{natbib}
 
 % fonts
-\usepackage[default,oldstyle,scale=0.95]{opensans}
+\usepackage[default,scale=0.95]{opensans}
 \usepackage[T1]{fontenc}
 \usepackage{ae}
 
 % colorize links
-\usepackage[pdftex,hyperref,x11names]{xcolor}
-\usepackage[pdftex]{hyperref}
-\hypersetup{hidelinks}
+\usepackage[pdftex,x11names]{xcolor}
 
 % layout control
 \usepackage{geometry}
-\geometry{verbose,tmargin=1.25in,bmargin=1.25in,lmargin=1.1in,rmargin=1.1in}
+\geometry{verbose,margin=1in,marginparwidth=.6in}
 \usepackage{fancyhdr}
 
 % math typesetting
@@ -54,7 +52,7 @@
 % graphics
 \usepackage{graphicx}
 \usepackage[space]{grffile}
-\graphicspath{{/mnt/d/Dropbox/americium/graphics/}}
+\graphicspath{{../results/figures/}}
 
 % sideways figures
 \usepackage{rotating}
@@ -62,7 +60,13 @@
 \usepackage{pdflscape}
 
 % spacing
-\usepackage[doublespacing]{setspace}
+\usepackage[singlespacing]{setspace}
+\setlength{\emergencystretch}{2em}
+
+% pdf links after footnotes and spacing
+\usepackage[pdftex]{hyperref}
+\usepackage{xurl}
+\hypersetup{hidelinks,hypertexnames=false}
 
 % page template
 \setlength{\headheight}{15pt}
@@ -88,935 +92,782 @@
  \let\@evenfoot\@oddfoot}
 \makeatother
 
-
 \begin{document}
 
 \thispagestyle{empty}
 \begin{frontmatter}
 
-\title{Supplementary Information for\\
-``When America Stops Bridging: Diplomatic Discontinuity in UN Voting''}
-
+\title{Supplementary Information for\\The American Break: Allied Cooperation without the Hegemon}
 \author[strath]{Max Gallop}
 \ead{max.gallop@strath.ac.uk}
 \author[msu]{Shahryar Minhas}
 \ead{minhassh@msu.edu}
-
 \address[strath]{Department of Government and Public Policy, University of Strathclyde}
 \address[msu]{Department of Political Science, Michigan State University}
-
 \end{frontmatter}
 
-\newpage\setcounter{page}{1}
-
-\noindent This supplementary information gives the full specification of the
-snap-shift latent-space model, the Gibbs sampler, the identification strategy,
-the simulation study validating recovery, robustness checks, and the correlates
-of the 2025 snap referenced in the main text.
-
-\newpage
+\setcounter{page}{1}
 \appendix
-\section{The Snap-Shift Latent-Space Model}
+\section{Estimating change in latent relationships}
 \label{app:model}
 
-This appendix gives the complete specification of the model, the prior
-distributions, the Gibbs sampler, the treatment of identification, and the
-simulation study that validates recovery. We write the model for a single
-relation; the three relations are fit separately.
+Suppose Washington and Germany agree less often this year. The pair alone cannot tell us whose position changed. If Germany's relations with other countries continued while Washington's changed, we would locate the departure in Washington. We estimate these relationships jointly with a Gaussian dyadic likelihood, country effects and bilinear positions \citep{hoff:2021, minhas:etal:2019, gallop:minhas2021, sewell:chen:2015, park:sohn:2020}. The positions describe relationships after accounting for countries' general levels of agreement. At each annual transition a country either carries its earlier position forward or draws a fresh position independently of its past. We call the latter a `break' or `reset'. Countries share a reset probability but have their own annual indicators, so they can break in different years. This differs from longitudinal-network changepoint models that place breaks in the structure of the whole network \citep{park:sohn:2020}.
 
-\subsection{Data and notation}
+We attribute departures using the ties surrounding each country. Broad changes provide evidence of its departure; a change in one relationship may instead reflect the partner’s departure. Thus, continuation includes cases in which the country in question in the meantime had changed relations to some of its partners that in the meantime reset. A group, however, presents a special problem: Members of a group may move together as a group while at the same time continuing to agree on all ties with each other. We assess coordinated movement through each country’s ties outside the group. Classifying the corresponding relationships into these categories, however, does not yet allow us to conclude that these correspond to changed preferences on the part of the country in question. Rather, actual votes and simulated networks help distinguish a national departure from a changed relationship or a changed recorded agenda.
 
-For a relation observed over years $t=1,\dots,T$ on a common actor set
-$\{1,\dots,n\}$, let $Y_t$ denote the $n\times n$ sociomatrix in year $t$, with
-$y_{t,ij}$ the directed tie from $i$ to $j$ and $y_{t,ii}$ undefined. Actor
-composition may vary across years; an actor absent in year $t$ contributes no
-observations that year and its effects for that year are drawn from their priors.
-The latent rank $R$ is fixed in advance ($R=2$ in the main analysis). $I_R$ is
-the $R\times R$ identity.
-
-\subsection{Focal actor set}
-
-The focal rupture index and focal-actor summaries use a theory-selected set of
-order-relevant actors: the hegemon, core allies, strategic rivals, and pivotal
-hedgers. Table~\ref{tab:actor-set} lists the exact denominator. States outside
-this set remain in the fitted networks; they are excluded only from the focal
-summary index so that the index answers the theoretical question about
-weight-bearing actors rather than averaging over all observed states.
-
-The category rule is substantive rather than outcome-driven. The hegemon is the
-United States. Core allies are long-standing U.S.-aligned democratic partners in
-the Atlantic and Indo-Pacific wings whose diplomatic position bears directly on
-whether the allied core follows, fragments, or holds together after U.S.
-defection. Strategic rivals are states that persistently occupy adversarial or
-counter-order positions relative to the U.S.-led order in the post--Cold War
-period. Pivotal hedgers are regionally or economically important states with
-elastic cross-bloc strategies, so their movement indicates how far a rupture
-propagates beyond the hegemon-allied-rival core. The denominator is therefore
-not a claim that other states are irrelevant; it is the subset on which the
-paper's theory makes the sharpest configurational predictions.
-
-\begin{table}[ht]
-\centering
-\caption{Theory-selected focal actor categories used in the rupture-index and
-focal-actor summaries.}
-\label{tab:actor-set}
-\small
-\begin{tabularx}{0.95\textwidth}{@{}l X@{}}
-\toprule
-\textbf{Category} & \textbf{Actors} \\
-\midrule
-Hegemon & USA \\
-Core allies & FRA, DEU, GBR, ITA, CAN, JPN, AUS, NLD, ESP, KOR, BEL, NOR, DNK, POL \\
-Strategic rivals & RUS, CHN, PRK, IRN, BLR, SYR, VEN, CUB, NIC \\
-Pivotal hedgers & IND, TUR, BRA, ZAF, IDN, SAU, MEX, EGY, ARE, VNM, THA \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Table~\ref{tab:denominator-contrasts} repeats the index for wider and
-lower-exposure denominators. The focal actors have the highest 2025
-concentration, but the all-state and non-focal contrasts are also elevated. The
-implication is not that peripheral actors are inert; it is that the 2025 focal
-index is not produced by choosing a denominator that excludes a volatile
-periphery or by counting only the United States.
-
-\begin{table}[ht]
-\centering
-\caption{Denominator contrasts for the UN-voting rupture index. The index is the
-mean posterior snap probability for the listed actor set. The low-exposure
-contrast is the non-focal bottom quartile of 2024 U.S. trade dependence among
-states with complete covariates.}
-\label{tab:denominator-contrasts}
-\small
-\begin{tabular}{@{}l r r r r@{}}
-\toprule
-\textbf{Denominator} & \textbf{N in index} & \textbf{2024 index} &
-\textbf{2025 index} & \textbf{2025 rank} \\
-\midrule
-Theory-selected focal actors & 35 & 0.030 & 0.956 & 1 \\
-All observed states & 191 & 0.146 & 0.776 & 1 \\
-Observed non-focal states & 157 & 0.173 & 0.732 & 1 \\
-Low-exposure non-focal contrast & 34 & 0.228 & 0.742 & 1 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The focal denominator contains $35$ theory-selected actors. Of these, $34$ are
-observed in the 2025 UN-voting layer and all $34$ have posterior 2025 snap
-probability above $0.5$. Venezuela is the focal actor not observed in the 2025
-UN-voting layer; it is retained in the denominator with posterior snap
-probability $0.068$, making the reported focal index conservative. Excluding
-that unobserved focal actor gives a 2025 focal index of $0.982$.
-
-Table~\ref{tab:leaveout-index} reports the leave-out checks referenced in the
-main text. These are aggregation checks using the main posterior snap
-probabilities; they are not separate no-U.S. refits. Their purpose is narrower:
-to show that the focal rupture index remains near one when the headline actor,
-the two largest rivals, or all strategic rivals are removed from the denominator.
-
-\input{generated_tables/leaveout_index.tex}
-
-\subsection{Network construction checks}
-
-All three modeled relations are aligned to the same UN member-state actor grid
-and the common 1989--2025 year span before estimation. Self-ties are undefined
-in the model and are coded as missing in every relation. Table~\ref{tab:data-qc}
-summarizes the aligned arrays used by the sampler. The sanctions layer is the
-state-designator panel after this alignment; supranational designators such as
-EU and UN are present in the source parsing but are not actors in the fitted
-state-by-state network.
-
-UN voting comes from the United Nations Digital Library bulk voting file, which
-includes the February 24, 2025 Ukraine resolution used in the article's
-motivating example. Trade uses the IMF International Merchandise Trade
-Statistics API annual FOB exports series, transformed into bilateral
-merchandise-trade networks. Sanctions use the OpenSanctions consolidated
-sanctions-targets file, parsed into dated state-designator to target-country
-records. Because this is an event-count layer, non-self dyads with no observed
-designation in a year are coded as zero rather than missing. The trade and
-sanctions layers therefore use the annual evidence available at the time of
-analysis; they are not complete post-2025 propagation data.
-
-\begin{table}[ht]
-\centering
-\caption{Construction checks for aligned modeled arrays. Observed off-diagonal
-counts summarize non-missing dyads by year; fully unobserved actors are actors
-with no observed row or column entries in a given relation-year.}
-\label{tab:data-qc}
-\scriptsize
-\begin{tabular}{@{}l l r r r r r@{}}
-\toprule
-\textbf{Relation} & \textbf{Years} & \textbf{Actors} &
-\textbf{Min. dyads} & \textbf{Median dyads} &
-\textbf{Max. unobs. actors} &
-\textbf{Non-missing diag.} \\
-\midrule
-UN voting & 1989--2025 & 200 & 23562 & 36290 & 46 & 0 \\
-Trade & 1989--2025 & 200 & 12478 & 24434 & 43 & 0 \\
-Sanctions & 1989--2025 & 200 & 39800 & 39800 & 0 & 0 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Likelihood and data augmentation}
-
-Each observed tie is linked to a latent Gaussian variable $z_{t,ij}$ through a
-family-specific map, and the additive and multiplicative structure is placed on
-$z$:
-\begin{equation}
-  z_{t,ij} \;=\; \mu_t + a_{t,i} + b_{t,j}
-    + \mbs{u}_{t,i}^\top \mbs{v}_{t,j} + \epsilon_{t,ij},
-  \qquad
-  \begin{pmatrix}\epsilon_{t,ij}\\ \epsilon_{t,ji}\end{pmatrix}
-  \sim \mathcal{N}\!\left(\mbs{0},\,
-  \begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}\right).
-  \label{eq:srm}
-\end{equation}
-The within-dyad correlation $\rho$ encodes reciprocity. The map from $z_{t,ij}$ to
-$y_{t,ij}$ depends on the family: for the Gaussian case (importance-weighted UN
-agreement, and log trade) $y_{t,ij}=z_{t,ij}$ up to a scale; for the Poisson case
-(sanctions counts) $y_{t,ij}\mid z_{t,ij}\sim\mathrm{Poisson}(e^{z_{t,ij}})$.
-In each non-Gaussian case a data-augmentation step draws $z_{t,ij}$ from its full
-conditional given $y_{t,ij}$, after which every remaining update is conjugate
-Gaussian. For symmetric relations (UN agreement, total trade) we impose
-$\mbs{v}_{t,i}=\mbs{u}_{t,i}$ and $b_{t,i}=a_{t,i}$, so a single set of latent
-positions describes each actor.
-
-\subsection{Additive effects}
-
-The additive effects follow the social-relations model. Stacking
-$(a_{t,i},b_{t,i})$, we take
-\begin{equation}
-  (a_{t,i}, b_{t,i})^\top \sim \mathcal{N}(\mbs{0}, \Sigma_{ab}),
-  \qquad
-  \Sigma_{ab} \sim \mathrm{Inverse\text{-}Wishart}(\eta_0, \eta_0 \Sigma_0),
-\end{equation}
-which lets a state's propensity to send and to receive ties covary. The baseline
-$\mu_t$ absorbs the overall density of $Y_t$.
-
-\subsection{Latent positions and the snap-shift transition}
-
-The multiplicative factors carry the dynamics. For $t=1$, each
-$\mbs{u}_{1,i}\sim\mathcal{N}(\mbs{0}, \sigma_{u,0}^2 I_R)$; no snap indicator is
-defined for the first year because no previous position exists from which the
-actor could drift. For $t\ge 2$, the transition is the two-component mixture of
-the main text:
-\begin{equation}
-  \mbs{u}_{t,i} \mid \delta_{t,i}, \mbs{u}_{t-1,i}
-  \;\sim\;
-  (1-\delta_{t,i})\,
-    \mathcal{N}\!\left(\rho_{uv}\,\mbs{u}_{t-1,i}, \sigma_u^2 I_R\right)
-  \;+\;
-  \delta_{t,i}\,
-    \mathcal{N}\!\left(\mbs{0}, \kappa^2 I_R\right),
-  \label{eq:transition}
-\end{equation}
-with $\delta_{t,i}\sim\mathrm{Bernoulli}(\pi)$ independently across eligible $i$
-and $t$, and $\kappa^2\gg\sigma_u^2$. The drift component is the smooth AR(1)
-transition used by standard dynamic latent-position models; the snap component is
-a diffuse re-draw that discards the past. The persistence
-$\rho_{uv}$, innovation variance $\sigma_u^2$, jump scale $\kappa$, and rate $\pi$ are
-common across states, so that ``how much a typical state drifts'' and ``how large
-and how common a jump is'' are estimated from the whole panel rather than imposed.
-
-\subsection{Priors}
-
-We complete the model with weakly informative priors:
-\begin{align*}
-  \rho_{uv} &\sim \mathcal{N}(m_\rho, s_\rho^2)\ \text{truncated to } (-1,1),
-    & \sigma_u^{-2} &\sim \mathrm{Gamma}(\nu_u/2, \nu_u s_u^2/2), \\
-  \pi &\sim \mathrm{Beta}(a_\pi, b_\pi),\ b_\pi \gg a_\pi,
-    & \rho &\sim \mathrm{Uniform}(-1,1).
-\end{align*}
-The jump scale $\kappa$ is fixed on the standardized latent scale; the main
-analysis uses $\kappa=2$, making the snap prior diffuse relative to ordinary
-drift innovations estimated by $\sigma_u^2$. The $\mathrm{Beta}$ prior on $\pi$
-with $b_\pi\gg a_\pi$ is the formal statement that snaps are rare events. The
-main analysis uses $a_\pi=1, b_\pi=999$, a prior mean of $0.001$; this conservative
-calibration is chosen because drift-only simulations under weaker rare-event
-priors generated too many false snaps.
-
-\subsection{Metropolis-within-Gibbs sampler}
-
-One sweep of the sampler cycles through the following conditional updates.
-\begin{enumerate}
-\item \textbf{Augmentation.} For non-Gaussian families, update $z_{t,ij}$ given
-$y_{t,ij}$ and the current linear predictor. The Gaussian and binary cases use
-their standard truncated-Gaussian updates; the Poisson sanctions model uses a
-Metropolis--Hastings update for the augmented $z$ values.
-\item \textbf{Baseline and additive effects.} Draw $\mu_t$, then
-$(a_{t,i}, b_{t,i})$ from their Gaussian full conditionals given the SRM
-covariance, and update $\Sigma_{ab}$ from its inverse-Wishart conditional.
-\item \textbf{Latent positions and indicators.} For each $t\ge 2$ and each $i$,
-form the residual $r_{t,ij} = z_{t,ij} - \mu_t - a_{t,i} - b_{t,j}$, and the
-Gaussian information $V_{t}^\top V_{t}$ and $V_{t}^\top r_{t,i\cdot}$ that the
-year-$t$ ties carry about $\mbs{u}_{t,i}$. Under each regime the position has a
-Gaussian conditional update, a precision-weighted combination of this information
-with the regime's prior. The drift prior is centered at
-	$\rho_{uv}\,\mbs{u}_{t-1,i}$ with precision $\sigma_u^{-2}$; the snap prior is
-centered at $\mbs{0}$ with precision $\kappa^{-2}$. A forward contribution from
-year $t+1$ is included only when the current value of $\delta_{t+1,i}$ places the
-next transition in the drift regime; if year $t+1$ is itself a snap, it is
-conditionally independent of $\mbs{u}_{t,i}$. Each regime implies a
-closed-form Gaussian log marginal likelihood $\log\mathcal{L}_{\text{drift}}$ and
-$\log\mathcal{L}_{\text{snap}}$ for $r_{t,i\cdot}$. Draw
+For each observed unordered pair $i<j$, the Gaussian likelihood is
 \[
-  \delta_{t,i}\sim\mathrm{Bernoulli}\!\Big(
-  \sigma\big(\operatorname{logit}\pi
-  + \log\mathcal{L}_{\text{snap}}-\log\mathcal{L}_{\text{drift}}\big)\Big),
+y_{ij,t}\mid\mu,a,U,s^2\sim\mathcal N\!\left(\mu+a_i+a_j+u_{i,t}^{\mathsf T}u_{j,t},\ s^2\right).
 \]
-clamping the log-odds to $[-20,20]$ for numerical stability, and then draw
-$\mbs{u}_{t,i}$ from the full conditional of the selected regime.
-\item \textbf{Snap rate.} With $S=\sum_{t\ge 2,i}\delta_{t,i}$ snaps among the
-$M$ eligible actor-years, draw $\pi\sim\mathrm{Beta}(a_\pi+S,\, b_\pi+M-S)$.
-\item \textbf{Hyperparameters.} Update $\rho$ (reciprocity) by Metropolis--Hastings;
-update $\rho_{uv}$ (persistence) and $\sigma_u^2$ (innovation variance) from their
-conditionals, computed over the \emph{drift} transitions only, so that snapped
-increments do not inflate the estimate of how fast states ordinarily drift.
-\end{enumerate}
-These restrictions are required for the snap probability to have the rupture
-interpretation used in the main text. If snapped increments were included in the
-drift hyperparameter updates, the ordinary drift variance would learn from the
-very breaks it is meant to distinguish. If the forward AR term were retained when
-$\delta_{t+1,i}=1$, a reset in year $t+1$ would still force year $t$ to predict it.
-The implemented sampler therefore makes a snap a conditional reset rather than an
-oversized AR innovation.
-For the final observed year, no forward AR contribution exists by construction.
-The 2025 snap probabilities are therefore boundary-year estimates based on how
-well the 2025 relational profile is explained by continuity from 2024 versus a
-diffuse reset. They are not two-sided smoothed classifications that use future
-information. The simulation below includes a terminal planted snap and a
-drift-only terminal-year check for this reason.
-For UN voting and trade, we run the sampler for $6000$ iterations after $3000$
-burn-in, thinning to every tenth draw. Because the directed Poisson sanctions
-fit mixes more slowly, we run that fit for $30000$ iterations after $15000$
-burn-in, with the same thinning interval. Convergence is assessed by trace plots
-and effective sample sizes of the saved scalar chains, especially $\pi$,
-$\rho_{uv}$, and $\sigma_u^2$. The
-snap probabilities are posterior means of retained indicator draws. For every
-focal rupture index, we also average the retained indicators within each draw and
-summarize the resulting draw-level index. The reported intervals and rank
-probabilities therefore reflect posterior uncertainty in the snap assignments
-rather than treating the posterior mean probability matrix as fixed.
-Table~\ref{tab:snap-index-uncertainty} reports these draw-level summaries for the
-three main relation-level comparisons. The UN-voting fit is the primary
-empirical fit in the article; the trade fit is a cross-layer informative null;
-and the sanctions fit is a directed coercive-statecraft diagnostic. The directed
-Poisson fit mixes more slowly on the saved scalar chains, so the sanctions layer
-does not carry the main claim. The reported sanctions estimates show whether
-coercive relations move on the same schedule and side of the network as UN voting
-and trade.
+The expected agreement for a pair of countries combines the common level $\mu$, their country specific contributions $a_i$ and $a_j$ and the inner product of their positions. The common level and the country specific contributions are fixed over years, therefore the expected agreement changes only as a function of the countries’ positions. The map does not display the fixed terms, so it gives only part of the alignment that enters fitted agreement. For the calculation of the agreement for a single year we use the resolution weights as introduced in Section~\ref{sec:observed-votes}. We do not include self-pairs in the calculation and each unordered pair of countries is counted only once.
 
-\input{generated_tables/snap_index_uncertainty.tex}
+The priors are $\mu\sim\mathcal N(0,1)$, independent $a_i\mid v_a\sim\mathcal N(0,v_a)$, $v_a\sim\operatorname{IG}(5,b_a)$ and $s^2\sim\operatorname{IG}(.5,.5)$, where $\operatorname{IG}(a,b)$ has density proportional to $x^{-a-1}\exp(-b/x)$. The hyper-parameter values for $b_a$ are $0.04362008$ for the full network, copied-2024 and US-only-change comparisons, and $0.04124281$ for the US-ties-removed comparisons, including those with re-calculated resolution weights. The full-precision values for the constants are stored for each fit and not re-computed from the residuals.
 
-Table~\ref{tab:mcmc-diagnostics} reports the scalar diagnostics for the three
-main fits. The saved result objects also record the \pkg{lame} version and MD5
-hashes for the local snap-shift source files; the reproduction scripts check
-those hashes before refreshing manuscript numbers. A public replication archive
-should vendor or otherwise pin the same package source rather than rely on a
-mutable local branch. Because the local \pkg{lame} branch can receive later
-comment or documentation cleanup, Table~\ref{tab:mcmc-diagnostics}
-distinguishes recorded source hashes from the current local-source match. The
-recorded hash is the relevant provenance for the fitted objects; any public
-replication release should freeze the exact package source used for the final
-fits.
+With two latent dimensions, continuation depends on the preceding position whereas a reset breaks that dependence:
+\[
+\begin{aligned}
+\delta_{i,t}\mid\pi&\sim\operatorname{Bernoulli}(\pi),\\
+u_{i,t}\mid\delta_{i,t},u_{i,t-1}&\sim
+\begin{cases}
+\mathcal N(\rho u_{i,t-1},\sigma^2 I),&\delta_{i,t}=0,\\
+\mathcal N(0,\kappa^2 I),&\delta_{i,t}=1,
+\end{cases}\qquad t\geq2.
+\end{aligned}
+\]
+For continuation, $\delta_{i,t}=0$, a country's future position is centered around $\rho$ times its current position with variance equal to $\sigma^2$. Drift thus allows movement while preserving dependence on the previous position. After a reset, $\delta_{i,t}=1$, the new position is independent of its previous value, centered at zero with variance $\kappa^2 I$. Evidence in the observed dyads determines posterior support for the two alternatives. We estimate a shared reset probability $\pi$. The initial countries' positions are drawn from $\mathcal N(0,\sigma^2 I/(1-\rho^2))$ , i.e. a distribution which is the stationary distribution of the drifted positions' evolutions alone, and not a stationary distribution for the mixture. We assign $\rho\sim\mathcal N(.9,.1^2)$ truncated to $(-.99,.99)$, $\sigma^2\sim\operatorname{IG}(2,1)$ and $\pi\sim\operatorname{Beta}(1,999)$. $\kappa=2$. Because we estimate the drift variance, its ratio to reset variance is not fixed.
 
-\input{generated_tables/mcmc_diagnostics.tex}
+For periods when a country is not observed, a country’s path can be updated by its prior and by observations in neighboring periods. However, we report a break only if the country has observed ties on both sides of the transition. There is no reset indicator for the first period. In the final period we can assess whether it departed from its earlier path, but we will have no subsequent periods to assess whether that departure was persistent.
 
-\subsection{Identification and rotation invariance}
+The countries observed in both years are used to align each map configuration to the same 2024 reference, i.e., after a rotation or reflection the distances within a year and the fitted values are preserved. However, no translation and no rescaling is applied. Thus this is a display operation; estimates and reset probabilities are unchanged. Points show the means of the aligned draws, ellipses the covariance and the ninety-fifth empirical percentile of the squared Mahalanobis distance. The distance histories are averages of pairwise distances calculated within each draw and then averaged across draws, including West Germany among the allies and the Soviet Union among the rivals, if they are observed in a year. These distances cannot be used to compute agreement scores because agreement depends on the inner products of the positions.
 
-The multiplicative term is invariant to a simultaneous orthogonal rotation of all
-latent positions, $\mbs{u}_{t,i}\mapsto Q\mbs{u}_{t,i}$, $\mbs{v}_{t,j}\mapsto
-Q\mbs{v}_{t,j}$ for any orthogonal $Q$. The AR(1) prior couples adjacent years and
-so partially pins the rotation across time, but a snap, by re-drawing from an
-isotropic prior, relaxes exactly this coupling. We therefore (i) draw the snap
-indicators from the rotation-invariant marginal likelihoods above, which depend on
-the positions only through inner products, and (ii) report all substantive spatial
-claims, including bloc cohesion and the distance between the hegemon and its allies, in terms
-of rotation- and translation-invariant latent distances. The cooperation-space
-maps in the main text use posterior mean latent positions and apply a common-actor
-Procrustes rotation and translation to align 2025 to 2024. Posterior uncertainty
-in the positions is summarized by the per-coordinate posterior standard
-deviation, accumulated alongside the posterior mean. We do not interpret the
-raw coordinate axes substantively.
+\subsection{Country groups and regional distances}
 
-\subsection{What the snap probabilities add}
+These same aligned estimates are used to create country maps as well as to compute regional summaries for each year, giving each country with observed ties equal weight within its group for that year. The regional mean provides no additional test for allied response.
 
-The model produces an actor-year posterior surface as well as a system-level
-change score. Figure~\ref{fig:snap-history} reports that surface for the
-theory-selected focal actors over the full post-Cold War series. The heatmap
-shows the limit of the focal rupture index: some earlier years contain high snap
-probabilities for particular states or categories, while 2025 is distinctive
-because high probabilities arrive broadly across the hegemon, allies, rivals, and
-hedgers. The model is not assigning a label to the final year of the series; it
-estimates where discontinuity is and is not present for each actor-year.
+\subsection{Posterior summaries and computation}
 
-\begin{figure}[ht]
+For a country group $G$, let $G_t$ contain its members with observed ties in both years of transition $t$. We summarize the share resetting as
+\[
+S_{G,t}=\frac{1}{|G_t|}\sum_{i\in G_t}\delta_{i,t}.
+\]
+To determine how many countries of a given group reset at the same transition, we model the indicators as independent Bernoulli variables (given countries’ positions and transition parameters) and compute their distribution for the number of countries to have reset. The mean, credible interval and probability that this number exceeds some specified value for the given group of countries at a given time can then all be easily computed by averaging the distributions for the number of countries that have reset for each of the draws from the posterior, and the resulting numbers provide probabilities for events that do not appear in the sample of indicators including rare count events. Widespread change is defined as at least ten percent of the countries resetting, $S_{G,t}\geq .10$. This uses the distribution of the group count, rather than a tally of individual probabilities above a cutoff.
+
+We report this share for all eligible non-US countries, as defined in the scope, and for the fixed non-US comparison group. Two checks distinguish the contribution of American relationships from that of American votes to the weights. We first drop US ties while retaining the original weights, then recalculate the weights without American votes. A separate controlled fit copies 2024 into 2025 and changes only American ties. All relationships between other countries remain fixed in that check, allowing us to see whether the model attributes the change to the United States.
+
+To update a country's reset indicator, we integrate its current position out of the two adjacent transitions, then draw that position. Gaussian conditional distributions give the updates for the common level and country effects. Every modeled transition contributes to the beta update for $\pi$. We sample persistence with a bounded slice sampler and update the drift variance, including the contribution of the initial-position density.
+
+Conditional on its reset path and other countries' current values, each country's static effect and full trajectory, $z_i=(a_i,u_{i,1}^{\mathsf T},\ldots,u_{i,T}^{\mathsf T})^{\mathsf T}$, have a joint Gaussian distribution:
+\[
+z_i\mid\delta_i,U_{-i},a_{-i},\mu,\rho,\sigma^2,\kappa^2,v_a,s^2,Y_{\mathrm{obs}}
+\sim\mathcal N(Q_i^{-1}h_i,Q_i^{-1}).
+\]
+The observed dyads and the priors for the country effect and trajectory determine $Q_i$ and $h_i$. We use a block-tridiagonal factorization to integrate over the trajectory and draw $a_i$, then draw the trajectory given that effect. Reset indicators stay fixed in this step, and countries are updated sequentially against the current positions of their partners.
+
+To shift period means while holding countries’ idiosyncratic deviations fixed, we can define $u_{i,t}=x_{i,t}+m_t$, where $\sum_i x_{i,t}=0$, with $x$ fixed. Then the sampler integrates out the static levels. All period means are thus proposed by conditional gradients using a positive definite precision matrix. Both the forward and the reverse proposal densities enter the Metropolis ratio, each with its own precision. The static levels are then re-sampled from their conditional distribution. This is done by five successive proposals of step size $.75$ every fifth sweep.
+
+The UN chains have a further update for the overall mean and temporal deviations. Write $u_{i,t}=m+b_i+v_{i,t}$, taking $m$ as the mean over countries and periods, $b_i$ as the country's mean less $m$, and $\sum_t v_{i,t}=0$. Along direction $e=m/\|m\|$, draw $c\sim\mathcal N(0,.01^2)$ and set $q=\sqrt{1+c/\|m\|^2}$. After rejecting proposals with nonpositive squared radii, propose
+\[
+u'_{i,t}=qm+b_i+\left[I+(q^{-1}-1)ee^{\mathsf T}\right]v_{i,t}.
+\]
+The transform multiplies the overall mean by $q$ and divides the temporal deviations along $e$ by $q$. The country means relative to $m$ and deviations perpendicular to $e$ are kept fixed. The acceptance probability for this transform is computed using the observed-data posterior distribution with static levels and reset indicators integrated out, plus a log-Jacobian term of $(R-2-N(T-1))\log q$. We have $R=2$, with $N$ countries and $T$ periods. We re-sample the integrated variables after each acceptance or rejection. We make five proposals for the transform every fifth iteration of the sweeps. We have also included independent checks of the inverse transform, the Jacobian and for stationarity of the posterior distribution.
+
+We form fixed difference arrays from orthogonally aligned diagnostic-run trajectories and propose adding or subtracting each array with equal probability. The acceptance calculation integrates out static levels and reset indicators, which are then redrawn. Twenty proposals precede the first initialization sweep, with further proposals every fifth sweep. We save a flag so that resuming a run does not repeat initialization. None of the diagnostic-run draws is used in reported results.
+
+Rotating or reflecting all positions in a year leaves that year's fitted relationships unchanged. We propose $U_t\mapsto U_tQ$ for one year or a consecutive block, using the full mixture transition density to calculate acceptance. Affected reset indicators are integrated out and then resampled. If the same transformation applies to every period after a boundary, only the transition into that block changes. These proposals preserve the posterior.
+
+Unobserved years require different draws depending on where the gap falls. After a country's last observation, positions are drawn from the conditional prior. For a leading or internal gap, we average over possible latest reset times and use Gaussian bridges between the fixed endpoints of observed sections. Each missing unordered dyad is drawn once and mirrored. After its final use, we update the observed-data and missing-trajectory quantities; dyads are imputed again before they are next used.
+
+We check the implementation before assessing convergence. Conditional moments, mixture probabilities and likelihoods are compared with independent Gaussian calculations and enumerated small networks. We also check that inputs are preserved and that a run continues exactly from saved model and random-number states. For convergence, each checked continuous quantity must have rank-normalized split $\widehat R\leq1.01$ and bulk and tail effective sample sizes of at least 400 \citep{vehtari:etal:2021}. We apply these requirements separately to the parameters, rotation-invariant geometry, individual reset log-odds, mean reset share and count-threshold events. Conditional count probabilities avoid the undefined tail-quantile diagnostics that can arise with binary draws. Log-odds retain variation even when probabilities lie near zero or one.
+
+We performed five UN comparisons, all of which pass convergence checks. We ran four chains for the full network and for the network without the US ties, and two chains for each of the remaining comparisons. We started from saved diagnostic states excluding their diagnostic draws and 3,000 more warmup sweeps for each, then ran 12,000 sweeps keeping every fifth sample. The largest checked $\widehat R$ was 1.0082 with minimum bulk and tail effective sample sizes of 424/781.
+
+The probability that there is an American reset in 2025 is $.9976$, highest among its 36 full-network transitions. Meanwhile, the mean probability of a “reset” for the fourteen allies considered here is $.453\%$ in the full network, $.197\%$ in the network without US ties, and $.243\%$ when resolution weights also exclude American votes. Individual full-network allied probabilities never exceed $.021$. We calculate mean shares from conditional probabilities, averaging across posterior draws and equally across allies. They favor allied continuation alongside the American reset.
+
+For all non-US countries, the three observed-network fits have mean reset shares in 2025 in the $2.7$--$2.9\%$ range with 95\% intervals of $2.11\%$ to $3.68\%$ for each of the three fits (Table~\ref{tab:final_non_us_comparison}). Thus, 2025 is not unusually high for widespread resets among non-US countries. Indeed these means rank twenty-first or twenty-second out of 36 transitions. For the 33 observed selected non-US countries, their mean shares are all below $.3\%$.
+
+\begin{table}[ht]
+\centering\small
+\caption{Estimated non-US reset shares in 2025. Means and 95\% posterior intervals are percentages of the 190 non-US countries observed in both adjacent years. Rank one denotes the largest mean share among 36 annual transitions within each fit. Intervals use discrete reset counts.}
+\label{tab:final_non_us_comparison}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X r r r}\toprule
+Comparison & Mean & 95\% interval & Rank\\\midrule
+Full network & 2.861 & 2.11--3.68 & 21\\
+US ties removed & 2.811 & 2.11--3.68 & 21\\
+US ties removed; weights recomputed & 2.668 & 2.11--3.68 & 22\\
+Copy of 2024 & 0.002 & 0.00--0.00 & 36\\
+Only US ties change & 0.002 & 0.00--0.00 & 36\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The four countries which exceed $.99$ in every observed fit are: Bolivia, Dominica, Madagascar and Saint Vincent and the Grenadines. Weights matter much more for some other countries. After dropping US ties, recalculating resolution weights lowers S\~ao Tom\'e and Pr\'incipe from about $.92$ to $.19$ but raises Argentina from $.001$ to $.72$. The full-network American probability is $.9976$.
+
+The mean non-US reset share in the control replicating common 2024 ties into 2025 is about $.002\%$. Changing only US ties leaves it at $.002\%$ while raising the American probability to $.9997$. Hence, in these comparisons an American reset did not induce widespread resets among countries with fixed other connections.
+
+\subsection{The displacement threshold and specification checks}
+
+Conditional on positions and parameters, the log-odds of a reset in two dimensions are
+\[
+\frac{\|u_{i,t}-\rho u_{i,t-1}\|^2}{2\sigma^2}
+-\frac{\|u_{i,t}\|^2}{2\kappa^2}+\operatorname{logit}(\pi)+2\log(\sigma/\kappa).
+\]
+The displacement threshold occurs where the log-odds above equal zero. Using posterior means and the American squared position length in 2025 of 0.5314 gives a threshold of 0.2315, or 4.70 drift steps. Across observed posterior-mean position lengths, it ranges from 0.2308 to 0.2327. Washington's rho-adjusted move was 0.2900, with a 95 percent interval from 0.2785 to 0.3016. Allied moves ranged from 0.1176 to 0.1847, equivalent to 41 to 64 percent of the American move. Nine allies made their largest move in their own records, and the remaining five made their second largest. Thus the low allied probabilities coexist with large moves by their own historical standards: classification uses the common drift distribution, rather than each country's history.
+
+Holding the other draws fixed, we vary $\kappa$ over 0.5, 1 and 4. The American reset probability remains above 0.99; the largest allied probability is 0.050, at $\kappa=1$. These calculations reuse existing draws. The cold-start refits in Table~\ref{tab:variant_summaries} instead change inputs or persistence priors. In the recurring-title fit, only 2024 and 2025 use the restricted agenda. Earlier years retain their full agendas, so the low American probability concerns the final matched-question transition. It is not a comparison over a historically matched agenda. Equal resolution weights, by contrast, change the entire series.
+
+\begin{table}[ht]
+\centering\small
+\caption{Terminal American and allied break probabilities under alternative inputs and priors.}
+\label{tab:variant_summaries}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xrrrr}\toprule
+Fit & US & Highest ally & Allies above 0.5 & Diagnostics\\\midrule
+Cold starts & 0.99759 & 0.02070 & 0 & Pass\\
+Recurring titles & 0.00012 & 0.00002 & 0 & Pass\\
+Equal resolution weights & 1.00000 & 1.00000 & 14 & Pass\\
+Regular voters only & 1.00000 & 0.32078 & 0 & Pass\\
+Record ending in 2020 & 0.00002 & 0.00010 & 0 & Pass\\
+Allied agreement reduced & 0.99636 & 0.18420 & 0 & Pass\\
+Joint following on controlled network & 0.94387 & 0.00027 & 0 & Pass\\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{\textwidth}\footnotesize Each new fit uses two cold-start chains with 3,000 warmup and 12,000 sampling sweeps, retaining every fifth draw. The terminal year is 2025 except for the record ending in 2020. Diagnostics require maximum split $\widehat R\leq1.01$ and minimum bulk and tail effective sample sizes of 400 over all checked quantities.\end{minipage}
+\end{table}
+
+For joint following of the US by a set of allies, we copy the American vote into a quarter of each ally’s votes, starting from a base in which non-American relationships keep their earlier values. With an allied country keeping a share $w$ of its own votes, its agreement with other countries then is $w y_{ij}+(1-w)y_{US,j}$; and its agreement with other countries in the set of allies is then $w y_{ik}+(1-w)$, since the copied votes are shared. A separate division experiment reduces within-allied agreement by 0.20. Individual allied reset probabilities can stay below one half under either pattern. So we assess following and division in actual votes and within-group agreement as well as in the country classifications.
+
+With intercepts and country effects fixed over years, positions absorb changes in general agreement as well as relative relationships. The change in the US’ positions in 2025 is described mainly by a uniform decline in the agreement as captured in the positions (a uniform fall in fitted agreement, averaging 0.1896 over 190 partners, accounts for 78.4 percent of squared inner-product changes). The change can then be described in terms of the uniform decline and a directional component relative to it. Measured relative to this uniform fall, the directional component is $-0.1471$ for allies and positive at 0.0270 for rivals. Note, however, that the country’s reset probability does not distinguish these components. Thus, the main paper uses the full-agenda classification to describe the network departure and recurring votes to examine what changed on matched questions.
+
+\subsection{Comparison with dynamic ideal points}
+
+For comparison with ideal points we use the annual final-passage ideal-point estimates of \citet{bailey:strezhnev:voeten:2017} from Harvard Dataverse version 39. The file includes estimates of ideal points for the years 1946 through 2025. The file’s description cautions about increasing dimensionality when interpreting the one-dimensional 2025 estimates. We fit one orthogonal transformation, a rotation or reflection, per network posterior draw and apply it across years, preserving within-draw displacements. The second coordinate correlates 0.91 with ideal-point levels across 6,854 country-years, and its changes correlate 0.53 across 6,618 country-years. Network displacement correlates 0.45 with absolute ideal-point change. Both measures rank 2025 first among the 36 American annual changes since 1990. The ideal point rises by 0.73, while the network move is mainly toward the origin along the common axis, indicating reduced agreement with partners. Nearly all coordinates on this axis are negative, and the United States is closest to the origin in 2025.
+
+\subsection{Resets and voting participation}
+\label{sec:reset-participation}
+
+Our likelihood gives the same precision to annual agreement based on few shared votes as to agreement based on many. Therefore, a poorly located country position could move sufficiently in response to a few votes to be counted as a reset without a substantive change. Median participation is 59\% in country-years with reset probabilities above one half, against 98\% elsewhere. In fact, of the 194 country-years with reset probabilities above one half, 120 belong to 22 countries resetting at least three times. Their median participation in the years when they had reset was 38\%. The US and each ally had participation rates of 86\% or greater whenever observed. In Table~\ref{tab:reset_participation}, we report the results for the non-US countries by checking all four alternative participation cutoffs and using three-quarters in the results reported in the paper for the main estimation. Across these cutoffs, 2025 ranks twentieth to thirty-second of 36 transitions, with all four chains agreeing within one hundredth of a country.
+
+\begin{table}[ht]
+\centering\small
+\caption{Expected number of non-US countries resetting in 2025 by participation cutoff. A country enters when it voted yes, no or abstain in at least the stated share of the year's recorded votes. Rank one denotes the year with the largest expected number among 36 annual transitions at the same cutoff.}
+\label{tab:reset_participation}
+\begin{tabular}{lccc}\toprule
+Minimum share of votes cast & Countries & Expected resets & Rank of 2025\\\midrule
+None & 190 & 5.44 & 21\\
+One-half & 179 & 0.33 & 32\\
+Three-quarters & 173 & 0.32 & 27\\
+Nine-tenths & 146 & 0.24 & 20\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Noisy resets also push the shared reset rate upward. Its posterior mean is 2.8\% per country-year. In Table~\ref{tab:reset_rate} we replace this rate in each posterior draw with lower rates, keeping other draws fixed so that only reset prior odds change. The first replacement is 1.3\%, the expected reset share among non-US countries casting at least three-quarters of votes; the second is 0.1\%, the prior mean. This checks sensitivity to the shared rate without refitting.
+
+\begin{table}[ht]
+\centering\small
+\caption{Reset probabilities in 2025 under other reset rates, holding the other posterior draws fixed.}
+\label{tab:reset_rate}
+\begin{tabular}{lccc}\toprule
+ & Estimated rate (2.8\%) & 1.3\% & 0.1\%\\\midrule
+United States & 0.998 & 0.995 & 0.938\\
+United Kingdom, highest ally & 0.020 & 0.010 & 0.001\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each ally's reset probability in 2025 is below 0.021. The rate replacements in Table~\ref{tab:reset_rate} address sensitivity to the high shared reset rate while holding other posterior estimates fixed. The copied-2024 and US-only-change fits in Table~\ref{tab:final_non_us_comparison} address a separate issue: whether changing American ties creates apparent breaks elsewhere when the other relationships stay fixed.
+
+\subsection{Synthetic checks of widespread change}
+
+116 synthetic cases were declared. In total 92 distinct arrays were each fitted with two chains. Reusing an array does not add independent replication. As in the application, we start from saved diagnostic states and discard their draws plus 3,000 additional warmup sweeps. Eighty-six chain pairs were run for 12,000 sampling sweeps. Four chain pairs were run for 24,000 and two agenda-change pairs for 72,000 sampling sweeps. We retain every fifth state for all chain pairs. Extensions preserve complete states and all earlier post-warmup draws.
+
+The synthetic data for this test has 40 countries, twelve periods and two latent dimensions. The drift standard deviation was varied between $.05$ and $.10$ for three different seeds. The event was either placed in the interior of the sequence or in the last position. The dyad-error had a standard deviation of $.05$. The intercept was $.5$ and the country-effect standard deviation $.03$. Each unordered dyad was observed with probability $.9$. Two countries were absent initially and one at the end. The paired control data uses the same trajectories, same errors for the same dyads and same coverage. We used the common model’s priors, with $v_a\sim\operatorname{IG}(5,.04)$ and $\kappa=2$. The planted resets usually had standard deviation $.5$. Eight additional simultaneous-change cases use standard deviation two, matching the fitted reset component but not its full prior.
+
+We plant isolated, asynchronous and simultaneous resets, the latter involving a quarter or half of the countries, and compare them with ordinary drift. In addition to simple resets, other controls rotate a bloc, increase general agreement, rotate all positions together or change the agenda. A common rotation does not change the network; an agenda change leaves item votes fixed while changing the questions included. Bloc rotation and agenda change alter relationships without independently redrawing national positions. Some simulated changes consequently lie outside what reset indicators describe.
+
+An event counts as widespread when the posterior probability that $10\%$ or more of eligible countries reset is at least $.95$. We repeat this at $25\%$ and $50\%$, and also repeat with the designated first country excluded. As for the eligible countries to be considered for an event we only consider countries for which we have observed ties in both adjacent years of the transition. Thus the denominator for the fraction of countries that have to have reset for an event to be considered widespread will also depend on the coverage of a country. We examine every period, including those with no planted event, but classify a fit only after it passes the diagnostic requirements above. Constant traces fail those requirements.
+
+All 92 pairs of chains pass convergence checks. The maximum value of $\widehat R$ was 1.0095, while the minimum values of the bulk/tail effective sample sizes were 508/858. Table~\ref{tab:synthetic_results} counts distinct arrays at the designated event, except that common rotation reuses the six ordinary-drift arrays.
+
+\begin{table}[ht]
 \centering
-\includegraphics[width=\textwidth]{snap_history_heatmap.png}
-\caption{Posterior snap probabilities for theory-selected focal actors in the
-UN-voting fit, 1990--2025. Rows are ordered by actor category; columns are
-eligible transition years. Darker red indicates higher posterior probability
-that the actor-year is better described as a discontinuous reset than as smooth
-drift. The saturated 2025 column means that the broad focal set, not only the
-United States, is classified as snapping in 2025. Dashed vertical lines mark
-benchmark moments used in the historical calibration.}
-\label{fig:snap-history}
-\end{figure}
+\small
+\caption{Synthetic networks classified as undergoing widespread resets.}
+\label{tab:synthetic_results}
+\begin{tabular}{lrrrr}
+\toprule
+ & Distinct & \multicolumn{3}{c}{Share resetting} \\
+Change introduced & arrays & $10\%$ & $25\%$ & $50\%$ \\
+\midrule
+Ordinary drift & 6 & 0 & 0 & 0 \\
+One country resets & 12 & 0 & 0 & 0 \\
+Asynchronous resets & 12 & 0 & 0 & 0 \\
+One-quarter reset together & 16 & 16 & 4 & 0 \\
+One-half reset together & 16 & 16 & 13 & 0 \\
+One bloc rotates & 12 & 0 & 0 & 0 \\
+General agreement increases & 12 & 1 & 1 & 0 \\
+All positions rotate together & 6 & 0 & 0 & 0 \\
+Recorded agenda changes & 6 & 6 & 6 & 2 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{.96\textwidth}
+\footnotesize Classification requires a posterior probability of at least $.95$ that the indicated share resets. The denominator contains countries observed in both adjacent periods. The simultaneous-reset rows each include twelve arrays with planted reset standard deviation $.5$ and four with standard deviation two. The latter matches the fitted reset component. All arrays pass the full convergence assessment. The common-rotation and drift rows share inputs and therefore do not supply independent replications.
+\end{minipage}
+\end{table}
 
-Tables~\ref{tab:episode-typology} and~\ref{tab:country-snap-history} summarize the
-same surface in tabular form. Table~\ref{tab:episode-typology} shows that earlier
-episodes are real but partial: some are rival- and hedger-heavy, some are
-allied-heavy, and some are broad but moderate. Table~\ref{tab:country-snap-history}
-shows that many focal actors have high-probability snap years before 2025. The
-distinctive feature of 2025 is therefore synchronization across actor histories,
-not the mere existence of a large U.S. movement.
+All simultaneous-reset arrays satisfy the ten-percent criterion for widespread change. None of the ordinary-drift, isolated-reset or asynchronous-reset arrays meets the ten-percent criterion. Recovering an event’s extent is harder than detecting widespread change. With a quarter of countries resetting, none of the twelve smaller-variance arrays meets the twenty-five-percent criterion, while all four at the fitted model’s reset variance do. With half the countries resetting, nine of twelve smaller-variance arrays and all four fitted-variance arrays meet the twenty-five-percent criterion. None of the arrays, however, individually satisfy the fifty-percent criterion for widespread change. The posterior mean of the share of countries that reset underestimates planted shares, especially at small reset variance.
 
-Table~\ref{tab:raw-un-diagnostics} reports descriptive UN-voting diagnostics for
-2024 and 2025. These summaries do not replace the model: the annual UN agenda
-changes, so the table is not a same-resolution change score. It serves as a
-construct-validity check. The raw record shows the U.S. no-share rising sharply,
-U.S. agreement falling with allies, rivals, and hedgers, and allied internal
-agreement remaining high without U.S. ties.
+For these controls, the agenda-change arrays all meet the twenty-five-percent criterion even when the individual item votes are held constant; increased general agreement meets the twenty-five-percent criterion once. Bloc rotation never meets the ten-percent criterion. Outside the designated event period, no case reaches any tested threshold for widespread change. These controls show why we cannot equate resets with changed preferences or rely on them to detect every coordinated network change.
 
-Table~\ref{tab:un-agenda-diagnostics} reports the corresponding agenda
-diagnostic. The 2025 roll-call agenda is unusually large in the cached data:
-there are 192 resolutions in 2025 and 95 in 2024, and the 2025 resolutions are
-less competitive on average. The issue mix also changes. This is not a nuisance
-to be waved away. It means the annual UN-voting result is evidence about the
-observed 2025 diplomatic agenda, not a matched-resolution estimate of how the
-same issues would have been voted on under continued U.S. role performance. The
-construction checks below show that the result is not an artifact of
-divisiveness weighting or the most polarizing resolutions, but a fully
-issue-matched design remains a natural next robustness check.
+Note also that since we have very few data-generating seeds for each test case, the observed successes and failures characterize the specified cases. Hence, we can not use these to estimate power or false-positive rates for other, unseen test cases. Instead, we interpret agenda changes and changes in general agreement separately from planted resets because they change the network in different ways.
 
-Table~\ref{tab:un-issue-agreement} adds a reduced-form issue-stratified
-diagnostic. Within every broad agenda group, raw U.S.-ally agreement falls from
-2024 to 2025. Allied internal agreement, by contrast, is flat or higher in every
-group. This does not replace an issue-matched snap-model refit, because each
-group still contains different resolutions across years. It does show that the
-basic descriptive pattern is not confined to one agenda class: U.S.-ally
-separation and allied cohesion appear within Ukraine/Russia votes,
-Palestine/Israel votes, human-rights votes, development and economic votes,
-security and disarmament votes, and the residual institutional category.
+\subsection{Detecting breaks in the final period}
+\label{sec:terminal-detection}
 
-\input{generated_tables/episode_typology.tex}
+Since the observed record ends in 2025, we report performance in the final simulated period in Table~\ref{tab:detection}. Under ordinary drift or planted resets, every unplanted final-period probability is at most 0.002. At the fitted break size the model detects 57 of 60 planted resets with probabilities above one half. At a quarter of that standard deviation it detects just 2 of 6 isolated resets. Changing general agreement or the recorded agenda can yield high probabilities without a planted national reset. We therefore examine votes and recurring resolutions alongside the model.
 
-\input{generated_tables/country_snap_history.tex}
+\begin{table}[!ht]
+\centering
+\caption{Detection of planted changes in the final period of simulated networks}
+\label{tab:detection}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xcccc}
+\toprule
+ & & Planted & Detected & Highest probability, \\
+Change planted & Arrays & resets & above one half & no planted reset \\
+\midrule
+Ordinary drift & 6 & 0 &  & 0.000 \\
+One country resets, small & 6 & 6 & 2 & 0.000 \\
+A quarter reset at different times, small & 6 & 12 & 10 & 0.000 \\
+A quarter reset together, small & 6 & 60 & 34 & 0.001 \\
+Half reset together, small & 6 & 120 & 75 & 0.001 \\
+A quarter reset together, fitted size & 2 & 20 & 20 & 0.001 \\
+Half reset together, fitted size & 2 & 40 & 37 & 0.002 \\
+\addlinespace
+One bloc rotates & 6 & 0 &  & 0.350 \\
+All positions rotate together & 6 & 0 &  & 0.000 \\
+General agreement rises & 6 & 0 &  & 1.000 \\
+Recorded agenda changes & 6 & 0 &  & 1.000 \\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{.97\textwidth}\footnotesize Each simulated network has 40 countries and twelve periods. Changes occur in the final period, except that asynchronous resets are spread across periods ending there; this table counts only final-period resets. Small resets have standard deviation 0.5; fitted-size resets have standard deviation 2, matching the reset component of the fitted model. The third column counts planted resets across arrays, and the fourth counts those whose posterior reset probability exceeds one half. The last column is the highest final-period reset probability among countries without a planted reset. Probabilities average two chains per array. The supplement describes the full set of 116 simulated cases, including events planted in an interior period.\end{minipage}
+\end{table}
 
-\input{generated_tables/raw_un_diagnostics.tex}
+\subsection{Benchmarks and final-period artifacts}
 
-\input{generated_tables/un_agenda_diagnostics.tex}
+Mean agreement change standardized relative to the country’s preceding changes and root mean squared change for a country’s paired annual relationships to other countries were also calculated. On the full agenda set of all issues, the two benchmarks scored the United States highest among regular voters in 2025. On the full agenda the benchmarks also place allied movement near the top of the allies’ own records, consistent with network displacement. The model-free benchmarks provide another way to look at the countries’ recorded relationships and changes in those relations over time including through changes in the questions put to a vote.
 
-\input{generated_tables/un_issue_agreement.tex}
+The individual final-period probabilities differ across these simulations. None of the six ordinary-drift arrays has any individual probability above one half, with a maximum probability of 0.0002. A common level change flags 0, 0, 1, 5, 2 and 11 of 39 countries across six arrays. A separate country-specific level-change simulation lowers one country’s ties by 0.30 or 0.45, keeping generated position paths unchanged. This is to be distinguished from the above test of a common change to all countries. A flag means an individual probability above one half, whereas Table~\ref{tab:synthetic_results} uses posterior probabilities that a specified share of countries resets. 13 of those 19 common-level-change probabilities exceed 0.9. Changing the recorded agenda while holding every national vote fixed flags 16, 24 and 25 of 39 countries in three distinct arrays. 
 
-The near-saturation of the 2025 focal snap probabilities raises a natural
-diagnostic concern: any terminal year might be classified as a snap because the
-model does not observe the following year. Table~\ref{tab:snap-stress-tests}
-checks this directly with short stress-test refits. The diagnostic fits use all
-theory-selected focal actors plus 45 balanced non-focal actors, so they should be
-read as model-pathology triage rather than final inference. The actual 2025
-subset still produces high terminal snap probabilities. By contrast, replacing
-the 2025 network with a copy of the 2024 network produces no terminal-year
-snaps, and treating 2024 or 2023 as the terminal year produces very low focal
-snap probabilities. The evidence therefore does not support the interpretation
-that 2025 saturation is a generic final-year pattern. The data instead support a
-broad annual-agenda re-coordination that is specific to the observed 2025
-network.
+\subsection{Historical break classifications}
 
-\clearpage
-\input{generated_tables/snap_stress_tests.tex}
+Table~\ref{tab:known-breaks} reports selected departures by related countries around the end of the Cold War, providing a historical comparison with allied continuation in 2025. To connect a classification to a political event, the underlying votes still have to be read.
+
+
+\begin{table}[!ht]
+\centering
+\caption{Selected country-years with high reset probabilities}
+\label{tab:known-breaks}
+\small
+\begin{tabular}{lccc}
+\toprule
+Country & Year & Share of votes cast (\%) & Reset probability \\
+\midrule
+Bulgaria & 1990 & 97 & 1.000 \\
+Czechoslovakia & 1990 & 97 & 1.000 \\
+Hungary & 1990 & 95 & 1.000 \\
+Poland & 1990 & 94 & 1.000 \\
+Romania & 1990 & 95 & 1.000 \\
+Argentina & 1991 & 97 & 1.000 \\
+Belarus & 1991 & 76 & 1.000 \\
+Soviet Union & 1991 & 96 & 1.000 \\
+Ukraine & 1991 & 100 & 0.993 \\
+Russia & 2000 & 99 & 1.000 \\
+Belarus & 2000 & 96 & 1.000 \\
+Kazakhstan & 2000 & 88 & 0.883 \\
+Serbia & 2008 & 96 & 0.985 \\
+Argentina & 2024 & 100 & 1.000 \\
+United States & 2025 & 100 & 0.998 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{.80\textwidth}\footnotesize Posterior reset probabilities from the full UN voting model, rounded to three decimals. The share of votes cast is the percentage of the year's recorded votes in which the country voted yes, no or abstain. The table lists selected larger states.\end{minipage}
+\end{table}
 \FloatBarrier
 
-The terminal-year checks ask whether a snap model mechanically over-classifies
-the last observed year. A separate rolling prediction check asks whether 2025 is
-also unusually hard to forecast for a smooth no-snap model. We fit the same
-Gaussian AR(1) latent-space model twice: once through 2023 to predict 2024, and
-once through 2024 to predict 2025. Table~\ref{tab:oos-prediction} reports
-per-state forecast surprise, standardized against each state's own in-sample
-one-step forecast history. The contrast is sharp. Predicting 2024 gives a focal
-median surprise of $-0.44$, with no focal actors above the high-surprise
-threshold. Predicting 2025 gives a focal median surprise of $4.88$, with $94$
-percent of observed focal actors above that threshold. The focal 2025 forecast
-is also the worst focal one-step forecast in the training comparison set. The
-U.S. itself is not the high-surprise unit in this diagnostic; the predictive
-break is broad across allies, rivals, and hedgers.
+\section{Observed voting comparisons}
+\label{sec:observed-votes}
 
-\input{generated_tables/oos_prediction.tex}
+Our voting data cover the period from 1989 to 2025 and were downloaded on 6 February 2026. The 2025 record contains 192 items: 187 regular-session resolutions, four emergency-session resolutions, and A/DEC/80/506. The official lists for regular sessions also record how adoption took place (\ref{sec:consensus_selection}).
+
+For each question put to governments, we code a yes as $1$, an abstention as $0$ and a no as $-1$. Agreement between two countries is calculated as $g(x_i,x_j)=1-|x_i-x_j|/2$. Identical votes receive full credit, opposing yes/no votes receive none, and an abstention paired with yes or no receives half. Explicit nonvotes and absent records are missing.
+
+The fixed allied group comprises Australia, Belgium, Canada, Denmark, France, Germany, Italy, Japan, the Netherlands, Norway, Poland, South Korea, Spain and the United Kingdom. The rivals are China, Russia, North Korea, Iran, Belarus, Syria, Venezuela, Cuba and Nicaragua. Maps also distinguish India, T\"urkiye, Brazil, South Africa, Indonesia, Saudi Arabia, Mexico, Egypt, the United Arab Emirates, Vietnam and Thailand. Membership in these groups is fixed within the broader country panel, while their relationships are free to change.
+
+Coverage within the fixed groups varies over time. Venezuela remains on the selected list but has no 2025 observations, leaving 34 selected countries, or 33 without the US. A reset requires observations in both years of the transition. For descriptive histories, we join West Germany in 1989 to Germany; the model keeps their identifiers separate and excludes Germany from 1990 reset summaries. East Germany is separate, Russia is not joined to the Soviet Union, and South Korea enters in 1991. Consequently, histories requiring all fourteen allies are shorter than those based on whichever allies are observed.
+
+We give greater annual weight to resolutions with more evenly divided yes/no votes. Using the archived reported yes and no totals $Y_r$ and $N_r$ on resolution $r$, we calculate
+\[
+w_r=0.1+0.9\left(1-\frac{|Y_r-N_r|}{Y_r+N_r}\right),\qquad
+ y_{ij,t}=\frac{\sum_{r\in\mathcal R_{ij,t}}w_r g(x_{ir},x_{jr})}{\sum_{r\in\mathcal R_{ij,t}}w_r}.
+\]
+The set $\mathcal R_{ij,t}$ contains questions on which both countries cast a yes, no or abstain vote in year $t$. We assign a weight of $0.1$ when $Y_r+N_r=0$; the equal-weight case uses $w_r=1$. The original weights retain the American contribution to measured divisions even when US pairs are dropped. Recalculating $Y_r$, $N_r$ and the weights removes the American vote from each resolution’s division as well. We display both comparisons.
+
+\subsection{Selection and the individual allies}
+
+We selected the fixed group after examining the 2025 votes. Membership requires a mutual defense treaty with the United States continuously from 1 January 2001 through 2025, high-income status in the World Bank’s July 2026 classification, and 2024 GDP of at least 400 billion dollars in the October 2026 World Economic Outlook. Türkiye is excluded by income, Sweden by the treaty window, and Finland, Czechia, Portugal and Greece by economic size.
+
+The same fourteen countries are selected at any GDP cutoff above 347.564 and up to 433.035 billion dollars. Treaty-window start years from 2000 through 2024 also preserve the group; 1999 excludes Poland and 2025 adds Sweden. The previous income classification, DAC membership and World Bank GDP each give the same group. Replacing GDP with a regular-budget assessment share of at least 0.5 percent does so as well. These checks describe the sensitivity of a rule chosen after observing the votes.
+
+\begin{table}[ht]
+\centering\small
+\caption{Selection and observed votes of the fourteen allies in 2025.}
+\label{tab:allies_individual}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xrrrrr}\toprule
+Ally & Treaty year & 2024 GDP & Votes kept & Break probability & Move / $\sigma$\\\midrule
+Belgium & 1949 & 670.8 & 14 / 14 & 0.0011 & 2.9\\
+Germany & 1955 & 4746.9 & 13 / 14 & 0.0020 & 3.1\\
+Denmark & 1949 & 433.0 & 13 / 14 & 0.0021 & 3.1\\
+Spain & 1982 & 1729.8 & 14 / 14 & 0.0011 & 2.9\\
+France & 1949 & 3177.8 & 14 / 14 & 0.0011 & 2.9\\
+Italy & 1949 & 2382.7 & 13 / 14 & 0.0017 & 3.0\\
+Netherlands & 1949 & 1206.8 & 12 / 12 & 0.0027 & 3.2\\
+Poland & 1999 & 921.7 & 14 / 14 & 0.0008 & 2.8\\
+Australia & 1952 & 1799.0 & 14 / 14 & 0.0134 & 3.6\\
+Canada & 1949 & 2270.1 & 14 / 14 & 0.0092 & 3.5\\
+United Kingdom & 1949 & 3713.6 & 14 / 14 & 0.0204 & 3.7\\
+Japan & 1960 & 4207.6 & 14 / 14 & 0.0023 & 3.1\\
+South Korea & 1954 & 1880.8 & 14 / 14 & 0.0052 & 3.4\\
+Norway & 1949 & 500.9 & 14 / 14 & 0.0003 & 2.4\\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{\textwidth}\footnotesize All states have a treaty continuously in force during the selection window and high income in July 2026. GDP is in billion dollars. Votes kept concern recurring titles where Washington changed its vote. Break probabilities and displacement are from the released weighted full-agenda fit.\end{minipage}
+\end{table}
+
+Continuity extends beyond the EU. On American switches, the six non-EU allies retain all 84 paired votes and the eight EU allies retain 107 of 110. Their mean agreement with allied peers changes by $+0.9$ and $-0.2$ percentage points respectively. Of the 41 Second Committee resolutions opposed by Washington in 2025, the fourteen allies support 33 unanimously and cast 494 yes votes, 61 abstentions and 19 no votes in total.
+
+Other members keep 2,241 of 2,307 paired votes, moving towards Washington in 45 instances and away in 21 instances. Eight members move towards Washington in two or more instances. The counts use denominators specific to each member, resolution and group, including opportunities to move toward Washington.
+
+Participation records help put the sparse cases in context. Bolivia was initially covered under Article 19 of the Charter in January 2025 and was later granted voting rights in October. Afghanistan and Venezuela have no model observations in 2025. S\~ao Tom\'e and Pr\'incipe has session-specific exemptions, with a gap between sessions. None of the stored January-to-September arrears lists names Dominica, Madagascar or Saint Vincent and the Grenadines. Sparse participation alone therefore does not necessarily indicate a diplomatic reversal.
+
+\subsection{Average agreement across the voting history}
+
+In 2025, American agreement with allies and rivals is below the pre-2025 range for each group (Table~\ref{tab:annual_agreement_levels}). Washington voted no on roughly nine out of ten recorded items in 2025, its highest such share in 1989--2025. The departure therefore involves broader disagreement, rather than a transfer of agreement from Washington’s allies to its rivals. These annual agreement levels use the full recorded agenda and the group members observed in each year, so both question and country coverage can vary. To put the high US--allied agreement in 2024 in perspective, we also report Washington’s agreement with the fourteen allies for 2023 and for the history of recurring questions.
+
+\begin{table}[ht]
+\centering\small
+\caption{US agreement with allies and rivals across full annual agendas, in percent.}
+\label{tab:annual_agreement_levels}
+\begin{tabular}{lrrrr}
+\toprule
+ & \multicolumn{2}{c}{1989--2024} & & \\
+Partner group & Average & Annual range & 2024 & 2025 \\
+\midrule
+Selected allies & 56.9 & 43.3--73.1 & 70.9 & 23.8 \\
+Selected rivals & 23.8 & 13.3--36.8 & 24.9 & 11.2 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{.95\textwidth}
+\footnotesize Agreement is averaged across jointly recorded questions within each US--partner pair and then equally across observed partners. The historical average gives each of the 36 years equal weight. The observed group contains thirteen or fourteen allies and seven to nine rivals, using the fixed country groups defined above. Nonvotes are missing; an abstention paired with yes or no receives half credit. Titles need not recur across years.
+\end{minipage}
+\end{table}
+
+\subsection{Recurring titles and resolution weights}
+
+Recurring titles are used to compare the votes of corresponding questions in different years. The title of a document is converted to lower case letters. All occurrences of white space within a title are collapsed. Only the standard concluding Assembly-adoption phrase is removed; internal dates, punctuation, numbers and wording are preserved. A title identifying multiple items in either year is excluded. Over 36 annual and 35 two-year transitions, the historical minimum is 23 matched titles. For 2024–2025 there were 59 matches and for 2023–2025 there were 66. Agreement for each country pair is averaged over titles with substantive votes from both countries in both years, then pairs are given equal weight. Alternative scores require identical votes or use yes/no votes only. To check coverage, we require the United States and all fourteen allies to vote on a common set, or each pair to cover at least $80\%$ or all matched titles. Complete coverage reduces the number of pairs and historical comparisons.
+
+Note that the Countries and Years are asked the same set of questions, so the reweighting must preserve this dependence. A single positive exponential weight is assigned to a Title, and this same weight is used for all Countries and Years in the corresponding sample. To assess sensitivity to title weights, we repeat the reweighting and calculation of allied-agreement 1,999 times, and on each iteration, we first recompute the Group result for the current iteration as well as the largest earlier change for the current iteration. Vote-change accounting uses 2,000 repetitions. We then report the central $95\%$ range. Neither this range nor the historical rank estimates sampling uncertainty or probabilities for unobserved international questions.
+
+\begin{table}[ht]
+\centering\small
+\caption{Changes in agreement on recurring titles, in percentage points. Brackets give the $95\%$ resolution-weight sensitivity range under the primary score.}
+\begin{tabular}{lcc}
+\toprule
+Relationship & 2024--2025 & 2023--2025 \\
+\midrule
+US--allies & $-16.95\ [-25.78,-10.40]$ & $-17.43\ [-25.40,-10.81]$ \\
+Within all allies & $+0.25\ [-0.82,1.52]$ & $+0.70\ [-0.71,2.09]$ \\
+Within Europe & $-0.57\ [-1.62,0.16]$ & $-1.15\ [-2.41,-0.12]$ \\
+Within Indo-Pacific & $+1.13\ [0.15,2.93]$ & $+2.53\ [0.03,5.98]$ \\
+Europe--Indo-Pacific & $+0.29\ [-1.47,2.39]$ & $-0.04\ [-1.76,1.76]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As for the largest decline, the point estimate for 2025 under all scores and all coverage rules is the largest decline in the observed record, and its corresponding $95\%$ reweighting ranges are all below zero. For each set of weights and corresponding score and coverage rule, the largest previous decline is compared with the decline for 2025. We calculate a central reweighting range for the difference between these two numbers (2025 minus the largest previous decline) across sets of title weights for a given score and coverage rule. The range excludes zero under the primary score in annual and two-year comparisons. It includes zero with yes/no votes only and, over two years, with identical-vote agreement or a requirement that all countries vote on the same questions. The American break appears throughout the checks. Moreover, its margin over the previous largest decline is more sensitive to scoring and to the set of weights.
+
+We also examine an alternative set of bounds where an explicit nonvote is treated as a yes, no or abstain vote. These alternative bounds keep absent records excluded and are close to the primary American-break estimate. They include matches with explicit nonvotes, whereas the primary estimate needs substantive votes from both countries in both years. The denominators will be different from the primary American-break point, so the primary estimate may lie outside these bounds.
+
+
+
+
+
+\subsection{Accounting for each country's vote changes}
+
+We attribute agreement changes by replacing one country's vote at a time and averaging both replacement orders. Let $x$ denote the American vote, $z$ the ally's vote, and 0 and 1 the earlier and later years:
+\[
+\begin{aligned}
+C_{\mathrm{US}}&=\tfrac12\{g(x_1,z_0)-g(x_0,z_0)+g(x_1,z_1)-g(x_0,z_1)\},\\
+C_{\mathrm{ally}}&=\tfrac12\{g(x_0,z_1)-g(x_0,z_0)+g(x_1,z_1)-g(x_1,z_0)\}.
+\end{aligned}
+\]
+The contributions sum to $g(x_1,z_1)-g(x_0,z_0)$ and are zero for votes not changed between the two observations under consideration and use the same within-pair title means and equal pair weights as the agreement calculation. We checked all 81 substantive-vote combinations for these identities, country interchange and time reversal for both scores.
+
+The largest amount of lost agreement with either score, and with either of the two baselines 2023 and 2024, comes from the changed American votes (Table~\ref{tab:vote_contributions}). In each score’s adjacent-year history, the American contribution is the largest in absolute magnitude. The replacement calculation assigns the agreement difference to each government’s changed votes. The order of governments’ changes, and the reasons for the changes in its votes, are not identified by the replacement calculation.
+
+For tracking changes in an American reversal, we need to have recorded substantive votes of an ally as well as the US votes on a recurring title in both years. We first note whether an ally has kept its old vote when the US switches on a given title. We then count instances in which an ally moves toward the new American position on a given title only if that country did not already hold the new American position on that title. The counts are made on a country by country basis (i.e. country-specific denominators). Since the observations share resolutions and political circumstances, they are not independent Bernoulli trials.
+
+\begin{table}[ht]
+\centering\small
+\caption{Contributions to the loss of US--allied agreement, in percentage points. Contributions are calculated before rounding and averaged in the same order as agreement.}
+\label{tab:vote_contributions}
+\begin{tabular}{llrrr}\toprule
+Comparison & Score & US contribution & Allied contribution & Total\\\midrule
+2024--2025 & Partial credit & $-15.7944$ & $-1.1544$ & $-16.9488$\\
+2024--2025 & Exact equality & $-16.8277$ & $-1.1533$ & $-17.9810$\\
+2023--2025 & Partial credit & $-15.7439$ & $-1.6868$ & $-17.4307$\\\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The allies and other members by kind of recorded item}
+\label{sec:allied-agenda}
+
+The gap between agreement inside the allied group and agreement with other non-US members reported in the main paper for 2024 was 24.8 points for the entire agenda while for 2025 it decreased to 12.5 points for the entire agenda while it changed little on recurring resolutions. In order to address these differences, Table~\ref{tab:allied-agenda} links all 192 archive items in 2025 to the official adoption lists (see Section~\ref{sec:consensus_selection}). Of the 192 archive items in 2025, 58 were same-title votes that had been recorded in 2024, 33 unrecorded adoption decisions in 2024 followed by recorded votes in 2025’s same-title decisions, and 101 items without a same-title match to a 2024 resolution. Using the main paper’s scores and equal resolution weights, we compare 91 allied pairs and 2,464 ally-to-other-member pairs observed in both years. Weighting each item group’s agreement by the pair’s shared votes reproduces its full-agenda agreement exactly.
+
+On the 33 newly recorded resolutions, agreement with other members is about as high as agreement within the allied group. However, on the 101 unmatched items between 2024 and 2025 the gap is 8.0 percentage points. On these items, Washington opposes 32 out of 33 newly recorded resolutions as well as 95 out of 101 unmatched items between 2024 and 2025 while the allies generally support these items with the wider membership. Excluding these 33 newly recorded resolutions in 2025 the gap on the full recorded agenda is 15.2 percentage points. The full-agenda decline therefore arises on items without a recorded same-title vote in 2024, where the allies generally support the texts with the wider membership and Washington votes no.
+
+\begin{table}[ht]
+\centering\small
+\caption{Allied agreement with one another and with other members by kind of recorded item, in percent. The difference is the first agreement column minus the second, in percentage points.}
+\label{tab:allied-agenda}
+\begin{tabular}{lrrrrr}\toprule
+ & Items & US no votes & Among allies & Allies and others & Difference\\\midrule
+Full agenda, 2024 & 95 & 51 & 92.5 & 67.7 & 24.8\\
+Full agenda, 2025 & 192 & 174 & 95.3 & 82.7 & 12.5\\
+\addlinespace
+\multicolumn{6}{l}{\textit{2025 items by relation to 2024}}\\
+Recorded in both years & 58 & 47 & 93.3 & 65.9 & 27.4\\
+Newly recorded & 33 & 32 & 96.0 & 96.2 & $-0.2$\\
+Not matched to 2024 & 101 & 95 & 96.1 & 88.1 & 8.0\\
+All except newly recorded & 159 & 142 & 95.1 & 79.9 & 15.2\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Changes in average agreement and individual relationships}
+
+Removing American pairs leaves a large change among other countries on the full recorded agenda: root mean squared change is 12.48 percentage points, the largest of 36 annual transitions. Restricting the comparison to recurring recorded titles gives 4.20 points, ranking 15 out of 36. Mean agreement among non-US countries rose by about 9 points across the full agenda. Two-year results depend more on which titles and countries can be matched. We examine alternative weights, fixed-country panels and coverage rules, and decompose each year's change into a common mean, country-level change and pair-level change. Fixing the questions within each pair supplies less evidence of exceptional non-US change. These comparisons describe the observed network; estimating a causal effect of recording a vote would require a different design.
+
+\section{Recorded-vote selection and adoption without a vote}
+\label{sec:consensus_selection}
+
+
+
+Seventeen official lists for sessions 64--80 distinguish recorded and unrecorded adoption independently of the vote archive. Documents enter calendar years 2010--2025 by adoption date, retaining source vintages. Failed e-delegate access for sessions 64--76 required UN static pages; sessions 77--80 use e-delegate. Lettered ranges are expanded, with bundled counts checked separately; A/RES/75/254A-C is a parent, not an extra adoption. Source-row addresses repair three malformed 2011 identifiers. Duplicates of A/RES/70/110 and A/RES/73/163 agree on adoption method and year and are collapsed within adoption years, retaining the conflicting December 2015 dates for A/RES/70/110. The 37 individually tracked 2020 silence-procedure units count as unrecorded in the main comparison and are excluded in the alternative.
+
+We confirmed that for all recorded resolutions listed in the adoption list there were corresponding votes for them in the vote archive, and for every individual regular-session resolution in the vote archive there were corresponding list entries for them. A/RES/77/263A is the only adoption-method discrepancy: the list calls it unrecorded in 2022, whereas votes are archived. Substituting the archive classification gives 84 rather than 83 recorded units among 329 in 2022, but the ranked position and the transitions for 2025 remain the same. We kept conflicting within-year dates for the adoption of resolutions A/RES/66/254 and A/RES/74/7. Neither of the two versions was preferred over the other.
+
+All 278 regular-session recorded entries in 2024--2025 match member votes by identifier and date. Adding four emergency-session resolutions in each year and one decision in 2025 brings archive totals to 95 and 192; these additions are excluded from adoption-method comparisons. Five archived yes/no/abstain totals differ from totals calculated from member votes, but none is in the newly recorded title sets. We use member votes for pairwise agreement and archived reported yes/no totals for resolution weights.
+
+For title matching we compare two versions: adoption-list titles throughout, and archive titles for recorded items joined by document identifier. Both keep adoption-list titles for unrecorded items and apply the same formatting rules and exclusions for titles identifying multiple items in a year. Archive titles can resolve agenda prefixes, draft labels, zero-width characters and umbrella titles, but neither version uses votes to decide a match or relaxes internal punctuation and wording.
+
+Recorded votes for a majority of resolutions are included in the 2025 list, and their share and its annual increase exceed earlier observations, even when lettered parts are counted as a single part, and the disputed adoption classification in 2022 is changed. About one-third of linked titles previously adopted without a vote become recorded, against fewer than one in ten at the 2017 peak. Although adoption-list titles yield fewer matches, 2025 is the highest year. Reverse transitions in 2018, 2021 and 2022 are absent from the matched 2017 and 2025 comparisons, showing that procedural changes can be temporary. Washington opposed most newly recorded titles in 2017 and every such title in two years with only one qualifying title.
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{Adoption methods among unambiguous exact-title matches, 2024--2025}
+\label{tab:consensus_transitions}
+\begin{tabular}{lrr}
+\toprule
+Adoption method in 2024 and 2025 & Adoption-list titles & Linked voting titles \\
+\midrule
+Recorded vote in both years & 49 & 58 \\
+Without a vote in both years & 65 & 65 \\
+Without a vote, then recorded vote & 19 & 33 \\
+Recorded vote, then without a vote & 0 & 0 \\
+\midrule
+Total matched title pairs & 133 & 156 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Of the 19 adoption-list matches, there are 18 that are also in the 33 archive title matches for recorded items. Any unmatched or ambiguous titles are left unclassified. Looking at the full agenda for the recorded items in 2025, we find that marine biodiversity is the one topic where there is a recorded adoption and an unrecorded adoption. Removing it leaves 58 of the 59 recurring recorded pairs. The American decline remains large, while there are small changes in the levels of agreement within the allied group and among non-US countries (Table~\ref{tab:adoption_agreement_checks}).
+
+
+
+Both lists include all fourteen allies on every new recorded title, with substantive votes, overwhelmingly yes. The great majority of other recorded voters also support the linked titles, with some nonvotes recorded. The recorded agenda thus expands to include many questions separating Washington from its allies and most recorded voters. The lists omit the identity of the government requesting a vote, preventing attribution of the entire procedural change to American initiative.
+
+These thirty-three titles cover far more than the recorded Israel/Ukraine issues and also include other institutional issues, as well as several development/economic, security/disarmament, and human-rights questions. All were classified using the same pre-existing sets of keywords and their precedence, unchanged by observed votes. These approximate categories are not UN codes. “Institutional and other” includes the cases in which no corresponding issue had been assigned to any of the categories.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Agreement checks using alternative item coverage. The upper panel reports changes in percentage points on the 58 titles recorded in both years after ambiguity is checked against the full adoption agenda. The lower panel reports 2025 annual agreement percentages with and without the non-resolution decision.}
+\label{tab:adoption_agreement_checks}
+\begin{tabular}{lrrr}\toprule
+Comparison & US--allies & Within allies & All non-US pairs\\\midrule
+Matched 2024--2025 change & $-16.42$ & $+0.26$ & $-0.59$\\\midrule
+Annual, including decision & 23.779 & 95.263 & 87.856\\
+Annual, excluding decision & 23.904 & 95.238 & 87.883\\\bottomrule
+\end{tabular}
+\end{table}
+
+An unrecorded adoption establishes the method of passage. Individual governments may still have objections, and the record does not establish every member's presence or vote.\footnote{Consensus permits reservations and dissociation \citep{un:cpc:consensus}; General Assembly rules allow majority/two-thirds decisions and requests for recorded votes \citep{un:ga:rules}.} We leave these adoptions outside the agreement networks and never assign them unanimous yes votes.
+
+This section covers adopted resolutions. The Second Committee inventory below also searches for formally considered proposals that did not reach adoption; neither observes ideas never introduced.
+
+A/DEC/80/506 is the one non-resolution item. Adopted on 12 September 2025, the decision endorses the New York Declaration on the peaceful settlement of the question of Palestine and implementation of the two-State solution. The US voted against the endorsement of the Declaration. Aggregate vote is 142 yes (10 no, 12 abstentions, 29 nonvotes). This decision is outside of the checks for adoption method and matching recorded titles listed above. Omitting it barely changes annual agreement (Table~\ref{tab:adoption_agreement_checks}).
+
+\subsection{Harmonized titles and earlier adoptions}
+
+With the strict one-year rule, 33 resolutions pass without a vote in 2024 and receive recorded votes in 2025. Harmonizing title formatting and looking back to the most recent adoption in 2022, 2023 or 2024 identifies 91 of the 187 recorded regular-session resolutions: the strict 33, another 9 with differently written 2024 titles, and 49 with predecessors in 2023 or 2022. Washington opposes 90 of the 91, while the allies cast 1,190 of 1,272 votes in favor. Their agreement is 95.4 percent with other members and 96.6 percent with one another. Leaving out these 91 gives a 2025 allied-to-other agreement gap of 23.0 percentage points, against 24.8 on the full 2024 agenda. The automatic match leaves 24 regular-session resolutions without a comparable title since 2022. We report three manually reviewed title links separately, excluding them from these headline counts. Title rules and time windows here differ from those in the text study.
+
+\section{Resolution texts and explanations of votes}
+\label{sec:content_review}
+
+Our adopted-text readings cover every American switch in the two comparisons ending in 2025: 14 against 2024 and 15 against 2023. Adding 33 linked newly recorded titles yields 62 comparisons across 49 target resolutions. This exhausts switches within those comparisons, including cases where continuity fails, rather than all recurring titles or earlier transitions. We examine whether the central operative commitments survived. Routine changes in dates, administrative references and implementation are allowed, but new substantive provisions, decisions and annual reports keep a text from passing this continuity test. We also record relevant preambular changes. The distinction matters when unchanged language approves a different Human Rights Council or International Criminal Court report, or when a new reporting year carries forward a treaty obligation. Political circumstances can change with the wording intact, and we have not compared every external instrument incorporated by reference. These are documented readings, performed neither automatically nor blind.
+
+Three texts pass this test for the annual American switches: the Comprehensive Nuclear-Test-Ban Treaty, Middle East nuclear-free zone and Mediterranean security resolutions. Comparing with 2023 leaves only the latter two. In the test-ban text, changes concerning the preparatory commission and verification resources rule out that longer comparison. Two other cases make clear why following the institution is insufficient. The 2025 Palestine-refugee resolution renews UNRWA's mandate through June 2029, a decision absent from its predecessors; the marine-biodiversity text moves from establishing a preparatory commission to authorizing arrangements and support for the first Conference of the Parties. The institutions continue, but the acts that members are being asked to authorize change.
+
+For the share of lost agreement attributable to switches on continuing commitments, we retain each ally's denominator and weight the fourteen allies equally. A switch failing the content test contributes zero; its weight is not reassigned to a passing text. The retained comparisons account for $3.40$ annual percentage points and $1.52$ points against 2023 (Table~\ref{tab:content_contributions}), as components of the full decline rather than means calculated only among qualifying titles. Every allied vote in these retained comparisons stayed unchanged. We can therefore locate American reversals on continuing commitments within the decline, without treating all seventeen points as disagreement over fixed proposals. Earlier transitions lack comparable text readings, precluding a historical rank for this component.
+
+\begin{table}[ht]
+\centering\small
+\caption{American vote changes after reviewing resolution texts. Each title pair compares resolutions with the same title in the two indicated years. Contributions use the original country-specific denominators and fourteen equal country weights. Agreement changes and contributions are percentage points.}
+\label{tab:content_contributions}
+\begin{tabular}{lrr}\toprule
+ & 2024--2025 & 2023--2025\\\midrule
+American switches reviewed & 14 & 15\\
+Title pairs retaining operative commitments & 3 & 2\\
+Other title pairs & 11 & 13\\
+Full title-matched agreement change & $-16.95$ & $-17.43$\\
+American contribution, all switches & $-15.79$ & $-15.74$\\
+American contribution, continuing commitments & $-3.40$ & $-1.52$\\
+Allied votes retained on continuing commitments & 42/42 & 28/28\\\bottomrule
+\end{tabular}
+\end{table}
+
+Of the 33 newly recorded ADOPTED documents and resolutions, 4 of them retain their operative commitments: disarmament and development; environmental norms for arms control; international human-rights cooperation; information in the service of humanity. For these 4 documents, all 56 allied votes were yes and the US voted no on all four. The other 29 contain changed substantive provisions or decisions. Previously unrecorded adoption does not establish national support for new provisions in newly recorded titles. The provision on financing for development for example, changed from preparations for a Conference to an endorsement of the Sevilla Commitment. The EU unsuccessfully sought the earlier ICT text and objected to new language on artificial intelligence, yet supported adoption \citep{eu:2025:ict}. Its reference to 2024 paragraph votes shows that governments can contest provisions before allowing the full text to pass without a recorded vote.
+
+\subsection{Following formally considered proposals}
+\label{sec:proposal_methods}
+
+Which proposals reached the Second Committee? We include substantive resolutions and decisions officially introduced, placed before the committee or acted on from 1 September to 31 December in 2023, 2024 or 2025. An issued draft alone is insufficient, as is a prepared script as evidence of completed action. We reconcile indexes and committee reports with official meeting records, published United Nations Journal summaries and Assembly adoption records. An explicit replacement link joins drafts within a negotiation; a shared title alone does not. This yields 45, 41 and 42 proposals in the respective years. Of these, 126 require Assembly adoption and two programme-review decisions fall within committee authority. We record outcomes at year-end and through 30 June of the next year.
+
+A request comprises an actor and action, with scope, obligation, resources and timing. We follow the first text documented as considered to adoption, also comparing the earliest issued draft if the starting text is already a revision. Reports and workshops count separately; methods and beneficiaries of one task stay together. Annex obligations enter through their adopting clauses and count once. Reaffirming ongoing mandates can request substantive work, unlike acknowledging completed tasks, anticipating already mandated meetings or inclusion on an agenda for consideration.
+
+Exact starting and ending passages support retention, narrowing or weakening, removal, replacement, or unresolved status. We record relocated provisions' new locations; references preserve requests through incorporation, not mere mention. Clause-level and whole-text qualifications stay attached. Additions remain separate from revised conditions and examples and cannot offset losses. Uncertain scope or survival stays unresolved and enters the bounds.
+
+We record demands' dates, participants, provisions, outcomes and source passages, distinguishing textual demands from vote requests and opposition to entire resolutions. Consensus records no national `yes'; missing documentation cannot establish an absent demand. Before coding outcomes we specified renewed defense where at least two named governments had jointly defended an activity in 2023 or 2024 before an American demand for change, and accommodation or deferral where sources identified necessary American participation or resources. Joint votes alone are insufficient evidence of joint defense; general funding concerns alone cannot establish necessary American participation or resources. Neither expectation is testable with the available 2025 information.
+
+The illustrative panel is separate from the full Second Committee population: seven of thirteen initiatives were selected after outcomes, six by a hash within the same committee and prior adoption categories. Among four negotiating cases, ICT was chosen before proposal results were complete. Later choices included a preservation case selected by source completeness and alphabetical order, a case with accepted amendments, and one with extensive narrowing. The narrowing case is the 2025 proposal with the largest changed-request fraction among those without unresolved primary classifications. That rule was refined after results were available.
+
+Restricting within-year comparisons to recurring initiatives gives 38 for 2023 to 2025 and 25 for 2024 to 2025. We hold initiatives constant, rather than requests, and do not count biennial absence as failure. Bounds using either starting text permit retention to rise or fall between years. Table~\ref{tab:proposal-content} reports adoption and content outcomes: 16 of 42 proposals in 2025 retain all classifiable initial requests and 26 have a known substantive change, with changes also common in 2023 and 2024. The main paper compares last row of the table for the three years under study, tracing the earliest-issued request(s) for each of the considered proposals through adoption.
+
+\begin{table}[!ht]
+\centering
+\caption{Proposal adoption and content within each year's negotiation, 2023--2025}
+\label{tab:proposal-content}
+\begin{tabular}{lrrr}
+\toprule
+ & 2023 & 2024 & 2025 \\
+\midrule
+Formally considered proposals & 45 & 41 & 42 \\
+Adopted proposals & 45 & 41 & 42 \\
+All initial requests retained & 18 & 12--13 & 16 \\
+At least one known substantive change & 27 & 28 & 26 \\
+At least one new request added & 21 & 18--19 & 23 \\
+\addlinespace
+\multicolumn{4}{l}{\textit{Mean percentage of initial requests retained}} \\
+At first documented consideration & 90.7--90.8 & 91.8--94.7 & 88.3--94.3 \\
+Earliest issued text & 83.7--83.9 & 90.6--93.5 & 81.7--87.7 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{.97\textwidth}\footnotesize Each proposal receives equal weight; request fractions are first calculated within proposals. Ranges reflect uncertainty about which clauses count as requests or whether revised clauses preserve them. The first five rows use the first documented considered text. Additions do not offset changes to initial requests. A known change may be narrowing, removal or substitution, including substitution following completion of an activity; it is not necessarily a bargaining concession. The earliest-issued comparison uses the same proposal population and includes earlier drafts where available. The two unnumbered internal decisions use their recorded decision passages in both comparisons.\end{minipage}
+\end{table}
+
+The number of first considered texts that are already revised gives a different starting point than the earliest issued draft for 26 of the proposals in total, 12 in 2023, 5 in 2024 and 9 in 2025.
+
+\subsection{Comparing successive adopted decisions}
+\label{sec:adopted_comparison}
+
+The main paper follows requests between adopted decisions, while the preceding study follows proposals through negotiation within a year. Their texts and denominators differ. The 128 proposals yield 39 matched initiatives and 89 comparisons: 26 for 2023--2024, 25 for 2024--2025 and 38 for 2023--2025. Excluding two internal programme initiatives and their four comparisons leaves 37 substantive initiatives and 85 comparisons. The annual comparisons use the same 24 initiatives present in all three years; the two-year comparison covers all 37 as well as the common 24. An absent biennial decision is not a failed initiative. These populations differ from the 38 and 25 recurring proposals in the within-year study.
+
+The inventories cover the full adopted texts, including preambles and incorporation clauses. Of 5,573 candidate text units, 3,345 contain substantive requests. An actor must be named or implied by the grammar; Assembly self-commitments qualify. We retain context and actorless statements outside the substantive count. Independent deliverables count separately, while methods and beneficiaries of one task stay together. An instruction to implement another agreement counts once: we consult that agreement to establish the request's meaning without counting its provisions again. Inventory rows are not denominators because the same text can appear on either side of different comparisons. The three comparisons begin with 873, 870 and 1,163 requests.
+
+We assign each earlier request one of seven outcomes: unchanged, stronger, weaker, changed but not orderable by strength, completed or expired, no corresponding request, or unresolved. Completion requires affirmative evidence; postponing unfinished work does not qualify. All outcomes, including unresolved cases, stay in the denominator. New requests cannot offset earlier losses. We code 2023--2025 directly, without composing annual labels. Where the later year's earliest draft is available, we record whether a request was already absent or disappeared during documented negotiation; bargaining before circulation is unobserved. Table~\ref{tab:adopted_outcomes} averages outcome shares equally across initiatives, including zero shares. Pooling unchanged requests instead, 682 out of 873 and 716 out of 870, would give larger initiatives more weight.
+
+\begin{table}[ht]
+\centering\small
+\caption{Outcomes of requests in the earlier adopted decision, as mean percentages across initiatives.}
+\label{tab:adopted_outcomes}
+\begin{tabular}{lcccc}
+\toprule
+ & 2023--2024 & 2024--2025 & 2023--2025 & 2023--2025 \\
+Initiatives & common 24 & common 24 & all 37 & common 24 \\
+\midrule
+Continued without substantive change & 76.5 & 81.3 & 67.3 & 67.4 \\
+Continued, stronger requirements & 3.5 & 1.4 & 5.0 & 3.9 \\
+Continued, weaker requirements & 1.1 & 0.6 & 1.1 & 1.2 \\
+Changed, not orderable & 3.4 & 5.1 & 6.9 & 7.5 \\
+Completed or expired & 4.2 & 4.1 & 6.3 & 7.9 \\
+No corresponding request & 0.5 & 0.5 & 1.2 & 1.1 \\
+Unresolved & 10.8 & 7.1 & 12.2 & 11.0 \\
+\addlinespace
+Earlier requests, summed & 873 & 870 & 1,163 & 873 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:adopted_subsets} groups requests by their features. Each average includes only initiatives containing that feature; the table reports their number. These categories describe requests, without assigning them political weight.
+
+\begin{table}[ht]
+\centering\small
+\caption{Share of earlier requests continuing without substantive change, by feature of the request, common 24 initiatives. Parentheses give contributing initiatives and pooled unchanged and earlier requests.}
+\label{tab:adopted_subsets}
+\begin{tabular}{lcc}
+\toprule
+Requests & 2023--2024 & 2024--2025 \\
+\midrule
+All & 76.49 (24; 682/873) & 81.31 (24; 716/870) \\
+Continuing, not time-limited & 80.06 (24; 629/732) & 86.30 (24; 664/771) \\
+Resources or appointments & 75.64 (23; 152/194) & 85.73 (23; 159/192) \\
+Reporting or monitoring & 68.98 (24; 85/111) & 70.22 (24; 81/120) \\
+Named institution & 73.07 (24; 322/447) & 73.54 (24; 327/439) \\
+Access or participation & 68.59 (21; 74/112) & 81.96 (22; 84/101) \\
+Deadline & 61.03 (22; 70/126) & 62.53 (22; 62/102) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Omitting one initiative at a time gives unchanged-share ranges of 75.46--79.81 percent for 2023--2024 and 80.50--84.03 percent for 2024--2025. For 2023--2025 across all 37 initiatives, the range is 66.42--69.20 percent. These are sensitivity ranges, not confidence intervals. The comparisons reuse texts and years, so annual percentages are not independent observations.
+
+\subsection{Request coding}
+\label{sec:request_coding}
+
+We manually coded and checked the request comparisons against the official drafts and adopted decisions, using the written codebooks. Each record identifies who was asked to do what, with the scope, resources and timing of the action, a source quotation and a paragraph reference. We matched requests between successive adopted decisions or from draft to adoption and assigned the outcome categories defined above. Uncertain matches and outcomes retain an unresolved classification. R scripts calculate the reported shares from the final classifications. The separate Assembly-wide wording-reuse measure is calculated algorithmically.
+
+\subsection{Documented American demands}
+
+The committee's summary records document 17 American demands on 11 proposals in 2023 and 15 on 8 proposals in 2024, sometimes supplying links that formal amendment texts alone do not establish. Corresponding 2025 summary records were unusable in the completed source search. Fewer recovered demands in that year can therefore reflect documentation and cannot establish a change in American behavior.
+
+The US mission to the UN published a Statement of Position on 29 October 2025, which was captured by the Internet Archive on 30 October 2025 \citep{usun:2025:longform}. The document states that the US is not abandoning the multilateral system and will engage selectively. We code five demands about text or resources: (1) specific development objectives rather than general references to Sustainable Development Goals; (2) use of existing resources for new initiatives; (3) environmental wording; (4) sex terminology; and (5) diversity, equity and inclusion terminology. The broader directions on debt and AI mean that this is not an exhaustive list of demands. The document is one action directed to all Second Committee resolutions and is not counted again for each proposal.
+
+Seven formal amendments from 2024 have texts preserved. Of these seven amendments, three were authored by the US and dealt with two proposals. The remaining four were authored by the European Union, Mexico and the UK and the committee’s summary records documented that the US was a cosponsor of the Mexican and British amendments. We distinguish authorship from later support. As noted previously, these sources cannot test the two expectations above. The selected cases illustrate how requests might change or continue, without establishing that coalition organization or dependence on American resources determines survival.
+
+\subsection{Earlier American reversals}
+
+The histories include every annual comparison in the first Trump term. US--allied agreement changes by $-1.59$, $-3.09$, $+1.58$ and $+1.42$ points in 2017--2020, against $-16.95$ in 2025. The corresponding within-allied changes for those years and 2025 are $+0.12$, $-1.00$, $-0.48$, $-0.85$ and $+0.25$ points. Newly recorded titles for eligible previously unrecorded matches in the corresponding years are 8/119, 6/113, 3/108, 1/101 and 33/98, respectively, excluding the separate 2020 silence procedure. As noted above, the between-administrations comparisons do not hold substantive content or political circumstances constant.
+
+\section{Text carried forward between successive resolutions}
+\label{sec:text_reuse}
+
+The wording measure is designed to simply measure language, i.e. not to interpret requests. This measure was applied to 10,880 adopted texts from Assembly sessions 44 through 80. Of these, 9,857 had usable text in the scans. Most early-session scans lack a text layer. A lowercased version of the title of a document was used, i.e. all capital letters were changed to lower case letters, and all digits and punctuation marks were removed from the title. A successor was matched to the most recently adopted document of the same title (with unique title) within a 4-session space. There are 6,927 pairs with successors adopted in 1994--2025. An operative paragraph counts as carried forward if at least 80 percent of its distinct four-word sequences occur anywhere in the successor, including the preamble. For each adoption year, all pairs were averaged equally. In addition to the measurement of wording as defined above, also other word-sequence lengths and of different thresholds and also of cited-predecessor matches were compared. This is clearly distinct from the actual reading of provisions in the request study.
+
+The approximate series retains its original parser; subsequent exact-match and term checks use corrections for repeated headers and page breaks. Repeated headers were removed and page breaks between pages were joined to correct title contamination and split phrases. The exact-match check found that 58.4 percent of the predecessor paragraphs were carried forward word for word in 2025. For 2024 this was 54.7 percent, and for 2017 it was 42.8 percent. As noted above, exact and approximate matches describe different things and thus neither measures request strength.
+
+\begin{table}[ht]
+\centering\small
+\caption{Operative paragraphs carried forward, in percent, under alternative rules. The main rule is four-word sequences with an 80 percent threshold, indexed by year of adoption. Ranks place 2025 among the 32 years from 1994, with 1 the highest.}
+\label{tab:text_reuse_rules}
+\begin{tabular}{lccc}
+\toprule
+Rule & 2024 & 2025 & Rank of 2025 \\
+\midrule
+Main rule & 83.0 & 82.5 & 5 \\
+Threshold of 60 percent & 90.8 & 88.9 & 6 \\
+Threshold of 90 percent & 69.2 & 71.1 & 2 \\
+Three-word sequences & 87.0 & 86.2 & 5 \\
+Five-word sequences & 78.9 & 79.1 & 4 \\
+\addlinespace
+Indexed by session, not year of adoption & 81.6 & 84.7 & \\
+Adding cited predecessors, by session & 81.0 & 84.2 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:text_reuse_rules} further shows high retention in 2025 under alternative matching rules. For the main data series we index by adoption year in order to follow calendar-year votes and the ‘American turn’ that started in January 2025. A session index instead puts resumed adoptions early in the next year under the session’s opening year. Omitting committees in turn gives retention rates of 80.5--84.6 percent for 2025 and 81.5--84.8 percent for 2024. Omitting one predecessor/successor pair moves either figure by less than half a point.
+
+Similar results for unchanged request continuation and for operative-paragraph retention are shown for the 58 Second Committee adopted-decision pairs in common with the request study (Section~\ref{sec:adopted_comparison}). The correlation of continued request continuation and of operative-paragraph retention is 0.83 for the 58 pairs in total. The 23 annual pairs in turn show correlations of 0.96 and of 0.95, and corresponding means of 79.6 percent and of 81.4 percent for the adoption years 2023–2024 and of 81.9 percent and of 83.2 percent for the adoption years 2024–2025. The 12 two-year pairs have corresponding means of 72.8 percent and of 82.8 percent, and a correlation between the measures of 0.16. While more tasks are finished over two years, request coding does, however, enable to distinguish completed work from mere wording that has been repeated.
+
+The 2025 data was organized by Washington’s earlier and later votes in Table~\ref{tab:text_reuse_votes}, and compared against the new content review for those resolutions in Section~\ref{sec:content_review}. Of the 33 resolutions in the review, 31 were covered by this measure. Thus there were 86 newly recorded resolutions, rather than 33, since forty-eight that recur every second or third year had a predecessor in either 2023 or 2022. The content review compares only 2024 with 2025. The other 38 resolutions were all annual, and thus matched against the preceding year. As before, the simple title matching that ignores digits etc. yields slightly more matches than the stricter voting rule. All 86 of the predecessor resolutions were adopted without a vote, according to the official lists.
+
+\begin{table}[ht]
+\centering\small
+\caption{Text carried forward and new paragraphs in 2025, in percent, by American vote and by hand-review classification.}
+\label{tab:text_reuse_votes}
+\begin{tabular}{lccc}
+\toprule
+ & Pairs & Carried forward & New paragraphs \\
+\midrule
+Successor adopted without a vote & 99 & 79.6 & 22.0 \\
+Newly put to a vote, United States voted no & 86 & 83.0 & 23.9 \\
+United States voted no both times & 46 & 91.6 & 10.1 \\
+American vote changed & 15 & 79.3 & 27.5 \\
+Same American vote both times, not no & 9 & 73.2 & 26.8 \\
+Newly put to a vote, other American vote & 2 & 58.6 & 43.2 \\
+\addlinespace
+\multicolumn{4}{l}{\textit{Text-reviewed newly recorded resolutions}} \\
+Routine updates & 3 & 98.1 & 1.9 \\
+Substantive updates, same question & 16 & 94.0 & 12.6 \\
+Material change & 12 & 73.3 & 30.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Note, that the wording measure is not able to distinguish between completion of a request and removal of it, nor does it identify requests that are kept by reference to other instruments. Also note, that title changes always destroy chains of precedence unless the same document can also be found by citation-based matching. Additionally, lettered resolutions can only be found if the combined symbol is also found. As said before, both documents need to have usable text layers, which in most cases are not available for early sessions of the years, so the series starts in 1994.
+
+\subsection{Six terms in the 2025 texts}
+
+This term check simply counts gender, sex, diversity, climate change, the Sustainable Development Goals and the Paris Agreement in the full texts. Operative-only counts are retained separately. The American statement is not the source of every term on this list. Rather, it lists a number of specific things which the American objector opposes. As was mentioned above, Table~\ref{tab:contested_terms} counts total removal as well as decrease in number of mentions. Thus, after a completed request, a reworded request or even a weakened request, the count can fall. These counts cannot distinguish the outcomes unaided.
+
+\begin{table}[ht]
+\centering\small
+\caption{Mentions of six terms in the 2025 successors and their predecessors.}
+\label{tab:contested_terms}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}Xrrrr}\toprule
+Term & Predecessors naming it & Removed & Reduced & Added\\\midrule
+Gender & 106 & 6 & 10 & 4\\
+Sex & 19 & 1 & 0 & 2\\
+Diversity & 62 & 3 & 5 & 4\\
+Climate change & 69 & 2 & 9 & 2\\
+Sustainable Development Goals & 111 & 4 & 27 & 2\\
+Paris Agreement & 44 & 2 & 2 & 0\\
+\bottomrule
+\end{tabularx}
+\begin{minipage}{\textwidth}\footnotesize The population is all 257 pairs with a successor adopted in 2025. Reduced excludes complete removal. Counts cover full text after running headers are stripped and words across page breaks are joined; they do not measure the strength of requests. Diversity includes biological diversity.\end{minipage}
+\end{table}
+
+\section{Content comparisons and negotiated cases}
+\label{sec:content-cases}
+
+We use the thirteen-initiative panel to illustrate changes in requests and resource conditions. It is separate from the full population of Second Committee proposals. Seven cases were chosen after their outcomes were known; six were chosen by a fixed comparison rule within committees and adoption categories. The panel therefore illustrates preservation and change without estimating how often concessions occurred or their causal effects. The main paper uses three of these cases: the vulnerability index, tax cooperation and Sevilla.
+
+\section{Observed merchandise trade}
+\label{sec:trade-overview}
+
+\subsection{Observed shares and nominal flows}
+
+To facilitate the comparison, we combine the merchandise trade data from US Census for the fourteen allies from 1992 to 2025 with exports among them from IMF Data. Census shares use complete annual observations and published world totals in one workbook version. Census exports are valued free alongside ship, and general imports at customs value by country of origin. For the IMF series, we keep reporting directions constant for a pair of countries in consecutive years, and use revised annual data for 2024-2025. All amounts are current dollars, and the United States is excluded from denominators for exports among allies.
+
+The fourteen allies’ share of American imports in 2023 was 37.91 percent, down slightly to 36.29 percent in 2024, and continued to fall to 34.02 percent in 2025. Furthermore, while total American merchandise imports rose 4.61 percent in 2025, imports from the allies actually fell 1.93 percent in nominal terms. Exports from the US to the same fourteen allies rose 4.41 percent over the same period. If we remove Switzerland from the total import denominator, the fall in the allies’ share is 1.90 points. Among the allies, the share of non-US exports going to other allies was 51.1 percent in 2024 and 51.2 percent in 2025. Eight members’ shares fall, yet intra-allied exports for the full group have risen 6.21 percent in 2025, marginally ahead of the rise in all non-US exports of 6.03 percent. Thus, there has been little change in the intra-allied share.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{oos_prediction_surprise.png}
-\caption{Rolling one-year-ahead forecast surprise in the UN-voting layer. Each
-column compares a smooth AR(1) no-snap model's forecast for the next annual
-network against that state's in-sample one-step forecast history. Higher values
-mean worse prediction. Grey points are non-focal states; colored points are the
-theory-selected focal actors.}
-\label{fig:oos-prediction}
+\includegraphics[width=.9\textwidth]{trade_shares_flows.pdf}
+\caption{The fourteen allies' shares of American merchandise trade and nominal dollar flows. Both panels use complete Census years and the same country group. Labels give 2025 levels and changes from 2024.}
+\label{fig:trade-shares}
 \end{figure}
+
+\subsection{Composition and policy timing}
+
+At the five-digit product level, composition accounts for 2.14 of the 2.27 percentage-point decline in the allies' share of American imports; within-category shares account for 0.13. Aggregating to six sectors instead assigns 1.98 points to within-category change. The decomposition therefore depends on aggregation. Canada contributes $-1.43$ percentage points to the overall share change, with crude oil and passenger cars accounting for the largest losses. Its within-category contribution is $-0.40$ points, against $+0.27$ for the other thirteen allies. South Korea, Japan and Germany account for the largest passenger-car losses.
+
+The tariff chronology separates when an order was announced from when it took effect and which goods were exempt. The Canada and Mexico orders, Executive Orders 14193 and 14194, were issued on February 1 but took effect after a delay on March 4; USMCA-qualifying goods were exempted on March 7. Steel and aluminum duties under Proclamations 10895 and 10896 began March 12. Proclamation 10908 brought automobile duties on April 3 and parts duties on May 3, while the April 2 Executive Order 14257 introduced reciprocal tariffs. Canadian counter-tariffs began in March, with steel and aluminum countermeasures on March 13 \citep{crs:2025:tariffs,canada:2025:countertariffs}. These dates document the policy measures spanning the observed trade changes; they are not estimates of tariff effects.
+
+
 \FloatBarrier
 
-Figure~\ref{fig:snap-transition} shows another diagnostic: how the posterior
-snap probability relates to the size of a transition relative to the fitted AR
-drift process. Each grey point is an eligible state-year transition in the
-UN-voting panel. The horizontal line marks posterior probability $0.5$; the
-vertical line marks one posterior drift standard deviation from the AR prediction.
-The relationship is strongly increasing, as it should be, but it is not a
-separate descriptive plot of raw movement. The vertical coordinate is the
-posterior regime probability from the drift-versus-snap comparison, while the
-horizontal coordinate is a posterior-mean diagnostic of transition size. The
-model supplies the probability that a transition is better explained as a reset
-than as an unusually large continuous innovation.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.9\textwidth]{snap_transition_diagnostic.png}
-\caption{Transition size and posterior snap probability in the UN-voting fit.
-Grey points are all eligible actor-year transitions from 1990 to 2025. The
-x-axis reports each transition's distance from its AR-drift prediction in units
-of the posterior mean drift standard deviation on a log scale; the y-axis reports
-the posterior snap probability. Colored points are the 2025 focal actors, with
-selected states labeled.}
-\label{fig:snap-transition}
-\end{figure}
-
-\subsection{Simulation study}
-
-To verify that the estimand behaves as its interpretation requires, we simulate
-networks from the same drift-or-snap transition used in the model, with known
-indicators, and check recovery. We generate $n=30$ actors over $T=8$ years with
-$R=2$, drawing planted snap years from the diffuse snap component and letting all
-other actor-years drift from the previous position. One planted snap is placed in
-the terminal year to check the same boundary condition that applies to 2025 in
-the empirical application. Figure~\ref{fig:sim-recovery} shows the result:
-estimated posterior snap probabilities are low across most non-planted
-actor-years and elevated at most planted snaps. Across all planted and
-non-planted eligible actor-years, the rank ordering of posterior snap
-probabilities yields an area under the ROC curve of approximately $1.00$. The
-exercise is a targeted validation check rather than a full Monte Carlo
-calibration; the
-individual planted-snap probabilities in Table~\ref{tab:validation} show that
-some lower-signal planted snaps fall below the $0.5$ interpretive threshold.
-Table~\ref{tab:validation} collects the validation quantities.
-
-\begin{table}[ht]
-\centering
-\caption{Validation of the snap estimand on simulated data. Power is summarized
-by the rank separation between planted and non-planted actor-years and by the
-individual planted-snap probabilities, including misses. Specificity is checked
-on drift-only data. Nesting: with the snap component disabled, the model
-reproduces the standard AR(1) dynamic latent-space fit.}
-\label{tab:validation}
-\small
-\begin{tabularx}{0.9\textwidth}{@{}X l@{}}
-\toprule
-\textbf{Quantity} & \textbf{Value} \\
-\midrule
-Snap-detection AUC (planted vs.\ non-planted) & $1.00$ \\
-Detection probability at the six planted snaps & $0.37,\ 1.00,\ 0.96,\ 1.00,\ 0.29,\ 1.00$ \\
-Detection probability at the terminal planted snap & $1.00$ \\
-Max.\ false snap probability (recovery run) & $0.090$ \\
-\midrule
-Max.\ snap probability, drift-only data & $0.263$ \\
-Mean snap probability, drift-only data & $0.0057$ \\
-Max.\ terminal-year snap probability, drift-only data & $0.133$ \\
-Mean terminal-year snap probability, drift-only data & $0.0118$ \\
-Posterior snap rate $\pi$, drift-only data & $0.0018$ \\
-\midrule
-Snaps off ($\pi\to 0$) reproduces AR(1) dynamic latent space & yes \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.85\textwidth]{sim_recovery.png}
-\caption{Recovery on simulated data. Each cell is the posterior snap probability
-for a simulated state (rows) in a simulated year (columns); darker is higher.
-Planted snaps are marked $\times$. The heatmap reports both recovered planted
-snaps and any planted snaps the model fails to separate sharply.}
-\label{fig:sim-recovery}
-\end{figure}
-
-The complementary property is specificity. Figure~\ref{fig:sim-specificity}
-contrasts the distribution of posterior snap probabilities under
-\emph{drift-only} data, simulated with no snaps at all, against the
-probabilities the model assigns at genuinely planted snaps. Under drift-only
-data the probabilities pile up at zero, with a mean of $0.0057$ across eligible
-actor-years. The largest drift-only value is $0.263$, so the conservative prior
-does not eliminate every isolated false positive; it does, however, make the
-drift-only distribution sparse and low. At planted snaps the probabilities are
-much higher on average, but not uniformly so, which is why
-Table~\ref{tab:validation} reports the individual planted cases. This separation
-supports the substantive reading of the results: a near-zero snap
-probability is evidence of continuity under this design, while borderline events
-should be interpreted with appropriate uncertainty.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.85\textwidth]{sim_specificity.png}
-\caption{Specificity and power. Top: posterior snap probabilities under
-drift-only simulated data (no snaps), which concentrate at zero. Bottom: posterior
-snap probabilities at planted snaps, which are generally higher but include weak
-recoveries.}
-\label{fig:sim-specificity}
-\end{figure}
-
-Finally, setting the snap component aside ($\pi\to 0$) reproduces the standard
-AR(1) dynamic latent-space fit, confirming that the snap model nests it. Together
-these checks support the interpretation of high posterior snap probability as
-evidence of discontinuity and near-zero probability as evidence of continuity
-under the fitted model.
-
-\section{Robustness Checks}
-\label{app:robustness}
-
-We report robustness checks for the main UN-voting result. The baseline is the
-$R=2$ snap-shift model reported in the article. We then vary the voting-score
-construction, the latent rank, the snap-prior scale, the snap-rate prior, and the
-state-composition rule used to summarize or refit the posterior.
-
-\subsection{Voting-score construction}
-
-The main analysis weights UN voting agreement by resolution divisiveness so that
-agreement on votes that split the assembly carries more information than
-agreement on near-unanimous votes. To check that the 2025 rupture is not an
-artifact of this transformation, we refit the snap model on three alternative
-UN-voting constructions: unweighted agreement; divisiveness-weighted agreement
-after dropping the most divisive ten percent of resolutions within each year; and
-unweighted agreement after the same drop.
-
-The 2025 diplomatic rupture is not sensitive to these choices. Under unweighted
-agreement, the 2025 focal rupture index is $0.991$ and 2025 ranks first; the
-United States, core allies, and pivotal hedgers all have category means of
-$1.00$, while strategic rivals average $0.967$. Dropping the most divisive
-resolutions makes the result still stronger: the weighted drop-divisive index is
-$0.998$, and the unweighted drop-divisive index is $0.996$, both ranked first.
-These checks show that the broad 2025 diplomatic rupture is not manufactured by
-the divisiveness weighting or by a small set of the most polarizing resolutions.
-
-\subsection{Balanced-state restriction}
-
-Changing state composition could, in principle, make a late-period year appear
-unusual because different actors are present. As a check, we recompute the
-reported rupture summaries on the $132$ states observed in every UN voting year,
-holding the posterior snap probabilities from the main fit fixed. This is a
-post-estimation restriction of the reported summaries, not a separate model
-refit.
-
-The balanced-state restriction leaves the conclusion unchanged. In the full
-summary the focal rupture index rises from $0.030$ in 2024 to $0.956$ in 2025,
-making 2025 the highest-ranked year in the series. On the balanced-state
-restriction it rises from $0.025$ to $0.979$, and 2025 remains ranked first. The
-United States' 2025 snap probability is unchanged at $1.00$ because the United
-States is in the balanced panel; the allied-core mean remains $1.00$, the rival
-mean is $1.00$, and the hedger mean is $0.939$. The distance pattern also
-survives the restriction: allied cohesion remains stable from 2024 to 2025
-($0.069$ to $0.068$), while the mean distance from the United States to the allied
-core expands from $0.103$ to $0.906$.
-
-\subsection{Historical latent-space comparisons}
-
-The rupture-index calibration is easier to interpret when the latent spaces
-around earlier benchmark moments are shown directly. Figure~\ref{fig:hist-space}
-compares four before-and-after windows: the post-Cold War transition
-($1989$ to $1992$), the post-9/11 and Bush period ($2000$ to $2002$), the first
-Trump administration ($2016$ to $2020$), and the 2025 rupture ($2024$ to $2025$).
-For each window, the later year is aligned to the earlier year by Procrustes
-rotation and translation using states observed in both years. Arrows trace
-theory-selected focal actors observed in both years; light grey points show other
-observed states; labels mark selected anchor states. In the post-Cold War panel,
-the Soviet Union (SUN) and Russia (RUS) are shown as historical anchors rather
-than connected as one actor.
-
-The historical comparisons clarify what is distinctive about 2025. Earlier
-periods contain movement, but the 2025 panel shows the specific configuration
-emphasized in the main text: the United States separates sharply
-from the allied cluster, while the allied cluster remains compact. The plot is
-descriptive rather than a substitute for the rupture index, because each panel is
-scaled to its own before-and-after comparison. Table~\ref{tab:historical-cal}
-puts the benchmark moments on the same annual-index scale. For each benchmark we
-report the eligible transition-year window, the window mean, the maximum annual
-index in that window, the year and post-Cold War rank of that maximum, and the
-window maximum as a fraction of the 2025 index.
-
-\begin{table}[ht]
-\centering
-\caption{Historical calibration of the focal-actor rupture index in UN voting.
-All rows use the same annual index and the same window summaries. Ranks are among
-eligible transition years, 1990--2025, with 1 the highest focal rupture index.}
-\label{tab:historical-cal}
-\small
-\begin{tabularx}{\textwidth}{@{}X l r r r r r@{}}
-\toprule
-\textbf{Benchmark} & \textbf{Years} & \textbf{Mean} & \textbf{Max.} &
-\textbf{Max. year} & \textbf{Max. rank} & \textbf{Max./2025} \\
-\midrule
-Post-Cold War transition & 1990--1992 & 0.350 & 0.406 & 1991 & 16 & 0.425 \\
-9/11, Afghanistan, and Iraq & 2001--2003 & 0.359 & 0.465 & 2001 & 9 & 0.486 \\
-Global financial crisis & 2008--2009 & 0.381 & 0.619 & 2009 & 2 & 0.648 \\
-Crimea annexation & 2014--2015 & 0.316 & 0.429 & 2015 & 11 & 0.449 \\
-First Trump administration & 2017--2020 & 0.324 & 0.498 & 2019 & 8 & 0.521 \\
-Russia full-scale invasion & 2022--2023 & 0.463 & 0.544 & 2023 & 4 & 0.569 \\
-Second Trump administration & 2025 & 0.956 & 0.956 & 2025 & 1 & 1.000 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\textwidth]{historical_space_shifts.png}
-\caption{Historical latent-space shifts around benchmark moments in UN voting.
-Each panel aligns the later year to the earlier year within the same event
-window. Arrows trace focal actors observed in both years; open points mark the
-earlier year and filled points mark the later year. Light grey points show other
-observed states. Panel scales are free, so distances and arrow lengths should be
-read within panels rather than compared visually across panels.}
-\label{fig:hist-space}
-\end{figure}
-
-\subsection{Transregional allied distances}
-
-The main text argues that the United States separates from the allied bloc
-without causing the European and Indo-Pacific wings of that bloc to separate from
-one another. Figure~\ref{fig:bridge-distance} tracks this claim over the full
-post-Cold War series. The European wing is France, Germany, the United Kingdom,
-Italy, the Netherlands, Spain, Belgium, Norway, Denmark, and Poland; Germany is
-represented by the observed German state code in each year. The Indo-Pacific
-wing is Japan, South Korea, and Australia. Distances are mean pairwise latent
-distances within each year, so they are invariant to rotation and translation of
-the latent space.
-
-The 2025 change is concentrated in the United States' relation to both allied
-wings. The mean distance from the United States to European allies increases from
-$0.090$ in 2024 to $0.894$ in 2025. The mean distance from the United States to
-Japan, South Korea, and Australia increases from $0.160$ to $0.893$. By contrast,
-the mean distance between the European allies and Japan, South Korea, and
-Australia is essentially unchanged, $0.107$ to $0.108$. The individual
-Indo-Pacific comparisons tell the same story: Japan's mean distance to Europe
-falls from $0.171$ to $0.164$, South Korea's from $0.093$ to $0.092$, and
-Australia's rises only from $0.058$ to $0.067$. The United States therefore
-loses its close position relative to both allied wings, but the distance evidence
-does not show a split between Europe and the Indo-Pacific allies.
-
-Figure~\ref{fig:bridge-space} shows the same result as a three-node distance
-schematic for 2024 and 2025. The node positions are fixed for readability; the
-edge labels are the latent distances. In 2024 the United States is close to both
-the European wing and the Japan--South Korea--Australia wing. In 2025 it moves
-away from both, while the European and Indo-Pacific wings remain close to one
-another.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.9\textwidth]{allied_bridge_distances.png}
-\caption{Transregional allied distances in the UN-voting latent space.
-Top: mean distances from the United States to the European allied wing, from the
-United States to Japan, South Korea, and Australia, and between the European and
-Indo-Pacific allied wings. Bottom: mean distances from Japan, South Korea, and
-Australia to Europe. The dashed line marks 2025.}
-\label{fig:bridge-distance}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.9\textwidth]{allied_bridge_space.png}
-\caption{Three-node schematic of transregional allied distances in
-the UN-voting latent space. Node positions are fixed for readability; edge labels
-report the mean latent distances among the United States, European allied wing,
-and Japan--South Korea--Australia allied wing. Thicker edges indicate larger
-distances.}
-\label{fig:bridge-space}
-\end{figure}
-
-\begin{table}[ht]
-\centering
-\caption{Transregional allied distances before and after the 2025 break.
-Entries are mean pairwise latent distances in the UN-voting space.}
-\label{tab:bridge-distance}
-\small
-\begin{tabular}{@{}l r r r@{}}
-\toprule
-\textbf{Distance} & \textbf{2024} & \textbf{2025} & \textbf{Ratio} \\
-\midrule
-United States to European allies & $0.090$ & $0.894$ & $9.9$ \\
-United States to Japan, South Korea, and Australia & $0.160$ & $0.893$ & $5.6$ \\
-European allies to Japan, South Korea, and Australia & $0.107$ & $0.108$ & $1.0$ \\
-Japan to European allies & $0.171$ & $0.164$ & $1.0$ \\
-South Korea to European allies & $0.093$ & $0.092$ & $1.0$ \\
-Australia to European allies & $0.058$ & $0.067$ & $1.2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Latent-rank, prior, and panel refits}
-
-The main text uses a conservative rare-snap prior,
-$\pi\sim\mathrm{Beta}(1,999)$, and a diffuse snap scale $\kappa=2$. The posterior
-snap rate in UN voting is nevertheless high ($0.369$), which should be read as
-evidence that the diplomatic layer contains many annual re-coordinations rather
-than as a failure of the prior. The point of Table~\ref{tab:un-spec} is narrow:
-it asks whether the 2025 conclusion depends on the exact modeling choices used in
-the main analysis. If the result disappeared when the latent rank, snap scale,
-snap-rate prior, or actor-composition rule changed, then the empirical claim
-would be fragile. These refits are sensitivity checks, not replacements for the
-main analysis.
-
-\begin{table}[ht]
-\centering
-\caption{UN-voting sensitivity checks for the 2025 diplomatic rupture. Rows vary
-the latent rank, snap scale, snap-rate prior, and actor-composition rule. Entries
-are posterior mean snap probabilities in 2025 except for $\bar{\pi}$ and the
-index rank. The focal index is the mean across the theory-selected hegemon, core
-allies, strategic rivals, and pivotal hedgers.}
-\label{tab:un-spec}
-\scriptsize
-\begin{tabularx}{\textwidth}{@{}l X r r r r r r r@{}}
-\toprule
-\textbf{Specification} & \textbf{Change} & $\bar{\pi}$ & \textbf{US} &
-\textbf{Allies} & \textbf{Rivals} & \textbf{Hedgers} &
-\textbf{Index} & \textbf{Rank} \\
-\midrule
-Main & main analysis fit, $R=2$, $\kappa=2$ & 0.369 & 1.000 & 1.000 & 0.896 & 0.944 & 0.956 & 1 \\
-Balanced summary & same fit, $132$ always-observed states & 0.369 & 1.000 & 1.000 & 1.000 & 0.939 & 0.979 & 1 \\
-Rank 3 & short refit, $R=3$ & 0.470 & 1.000 & 1.000 & 0.963 & 0.991 & 0.988 & 1 \\
-$\kappa=1.5$ & short refit, tighter snap prior & 0.369 & 1.000 & 1.000 & 0.894 & 0.952 & 0.958 & 1 \\
-$\kappa=3$ & short refit, wider snap prior & 0.369 & 1.000 & 1.000 & 0.894 & 0.952 & 0.958 & 1 \\
-$\pi\sim\mathrm{Beta}(1,1999)$ & short refit, rarer snap prior & 0.314 & 1.000 & 1.000 & 0.894 & 0.947 & 0.956 & 1 \\
-Balanced panel & short refit, balanced actor panel & 0.325 & 1.000 & 0.979 & 1.000 & 0.959 & 0.977 & 1 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Across all six checks, 2025 remains the highest-ranked year in the post--Cold War
-series. The table rules out a narrow specification explanation: the 2025 result
-is not created by the chosen latent dimension, the snap-prior scale, the
-rare-snap prior, or late-period changes in actor composition. The rare-prior
-refit is especially informative because it doubles the prior odds against snaps
-and still leaves the 2025 focal rupture index at $0.956$, with 2025 ranked first.
-The balanced-panel refit reaches the same conclusion while estimating the model
-only on states observed in every UN voting year.
-
-\section{Alternative Transition Models}
-\label{app:alternative-transitions}
-
-The snap-shift model is not defended primarily by global predictive fit. Its
-purpose is the actor-year discontinuity estimand. Still, we fit two alternative
-transition models on the main UN-voting layer: a Gaussian AR(1) dynamic latent
-space with no snap regime, and a Student-$t$ transition that allows large
-continuous innovations. Table~\ref{tab:transition-waic} reports WAIC summaries.
-The snap model has the best WAIC, but global panel fit is a blunt discriminator:
-most dyad-years are structurally stable, so all three models agree on the
-overwhelming majority of observations.
-
-\begin{table}[ht]
-\centering
-\caption{UN-voting transition-model comparison. Higher ELPD and lower WAIC are
-better; ELPD differences and standard errors are relative to the snap-shift
-model. The comparison is reported as a diagnostic, not as the basis of the
-rupture claim.}
-\label{tab:transition-waic}
-\small
-\begin{tabular}{@{}l r r r r r@{}}
-\toprule
-\textbf{Transition} & \textbf{ELPD WAIC} & \textbf{ELPD diff.} &
-\textbf{SE diff.} & \textbf{Eff. parameters} & \textbf{WAIC} \\
-\midrule
-Snap-shift & 1,250,152 & 0.0 & 0.0 & 949 & -2,500,304 \\
-Gaussian AR(1) & 1,249,429 & -722.6 & 27.9 & 860 & -2,498,859 \\
-Student-$t$ & 1,249,384 & -768.3 & 25.0 & 873 & -2,498,767 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The Student-$t$ fit is the most serious continuous alternative because it can
-absorb large movements without assigning a discrete snap. To compare it with the
-snap result, we recover each actor-year's AR(1) innovation magnitude from the
-fitted Student-$t$ latent paths and compute its percentile among all eligible
-actor-years. Table~\ref{tab:t-strain} summarizes the 2025 focal actors by
-category. The continuous model also regards 2025 as high strain: the United
-States is at the $96.9$th percentile, core allies have a median percentile of
-$97.0$, and pivotal hedgers have a median percentile of $91.6$. This supports the
-claim that 2025 is unusual even when large continuous innovations are allowed, but
-it does not replace the snap estimand because it does not return
-$\Pr(\delta_{i,t}=1\mid Y)$.
-
-\begin{table}[ht]
-\centering
-\caption{Student-$t$ transition strain in 2025. Percentiles compare each focal
-actor's 2025 AR(1) innovation magnitude with all eligible actor-years in the
-Student-$t$ fit.}
-\label{tab:t-strain}
-\small
-\begin{tabular}{@{}l r r r r@{}}
-\toprule
-\textbf{Category} & \textbf{N} & \textbf{Mean percentile} &
-\textbf{Median percentile} & \textbf{Maximum percentile} \\
-\midrule
-Hegemon & 1 & 0.969 & 0.969 & 0.969 \\
-Core allies & 14 & 0.964 & 0.970 & 0.984 \\
-Strategic rivals & 9 & 0.772 & 0.863 & 0.923 \\
-Pivotal hedgers & 11 & 0.913 & 0.916 & 0.961 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Correlates of the 2025 Snap}
-\label{app:whosnaps}
-
-The configuration result is descriptive: it characterizes which states moved and
-how the space was reconfigured. As a consistency check, we ask whether pre-2025
-covariates help explain the remaining variation in 2025 snap probabilities. This
-exercise should be read cautiously for the opposite reason from the old rare-event
-framing: the 2025 diplomatic rupture is broad, so the dependent variable is
-saturated near one for many states. We report the exercise as descriptive
-triangulation, not as a causal account of why any state moved.
-
-Across the $167$ states with complete covariates, $136$ have posterior 2025 snap
-probability above $0.5$. States with a United States defense pact have a mean snap
-probability of $0.770$, compared with $0.808$ among states without one; formal
-alliance status is therefore not the margin that separates high from low snap
-probability in this broad event. Table~\ref{tab:who-snaps} reports a
-fractional-logit regression of posterior 2025 snap probability on pre-2025 United
-States and rival voting alignment, United States and Chinese trade dependence,
-trade centrality, prior sanctions exposure, regime type (V-Dem electoral
-democracy index), and United States alliance. Continuous predictors are centered
-and divided by two standard deviations, so their coefficients are comparable to
-the binary alliance indicator. The conventional standard errors and $p$-values
-are descriptive diagnostics; they do not propagate uncertainty from the first
-stage snap posterior.
-
-\begin{table}[ht]
-\centering
-\caption{Descriptive fractional-logit correlates of posterior 2025 snap
-probability. The dependent variable is the posterior snap probability from the
-main UN-voting fit, bounded away from zero and one for estimation. Continuous
-predictors are centered and divided by two standard deviations.}
-\label{tab:who-snaps}
-\small
-\begin{tabular}{@{}l r r r@{}}
-\toprule
-\textbf{Predictor} & \textbf{Estimate} & \textbf{SE} & \textbf{$p$} \\
-\midrule
-Intercept & $1.734$ & $0.306$ & $<0.001$ \\
-United States voting alignment, 2024 & $5.170$ & $2.171$ & $0.018$ \\
-Rival voting alignment, 2024 & $3.895$ & $1.973$ & $0.050$ \\
-United States trade dependence, 2024 & $-0.762$ & $0.445$ & $0.089$ \\
-China trade dependence, 2024 & $0.112$ & $0.487$ & $0.818$ \\
-Trade centrality, 2024 & $0.787$ & $0.559$ & $0.161$ \\
-Prior sanctions exposure & $0.297$ & $0.584$ & $0.612$ \\
-Polyarchy, 2024 & $-1.599$ & $0.599$ & $0.008$ \\
-United States defense pact & $0.037$ & $0.625$ & $0.952$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The clearest conditional patterns are a positive association with pre-2025
-United States voting alignment and a negative association with polyarchy; rival
-alignment is positive but borderline by conventional thresholds. Trade
-dependence, trade centrality, prior sanctions exposure, and formal alliance
-status are small relative to their uncertainty. The exercise reinforces the
-descriptive point: 2025 is too broad a diplomatic rupture for a simple
-ally-versus-rival correlate story.
-
-
+\singlespacing
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
 \end{document}
