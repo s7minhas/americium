@@ -1,7 +1,11 @@
 # Local data and generated results
 data/
-results/
+results/*
 *.pdf
+
+# Track the figures the manuscript includes
+!results/figures/
+!results/figures/*.pdf
 
 # Installed and compiled model dependencies
 code/.library/
